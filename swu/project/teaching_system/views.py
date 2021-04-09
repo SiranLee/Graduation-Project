@@ -114,9 +114,11 @@ def login(request):
                     request.session['id'] = username
                     request.session['token'] = token
                     # 学生登陆时进行自己写入自己的路由
-                    for index in range(1, 10):
-                        studentRouteMap = StudentRoutesMap.studentRoutesMapManager.createStudentRoutesMap(username, index)
-                        studentRouteMap.save()
+                    stuRoutes = StudentRoutesMap.studentRoutesMapManager.filter(stu_no=username)
+                    if len(stuRoutes) == 0:
+                        for index in range(1, 10):
+                            studentRouteMap = StudentRoutesMap.studentRoutesMapManager.createStudentRoutesMap(username, index)
+                            studentRouteMap.save()
                     response = HttpResponse(json.dumps({'code': 20000,
                                                         'data': {'token':token,'message':'验证成功', 'role':['student']}
                                                         }))
@@ -749,17 +751,17 @@ def load_studentinfo(request):
             # 拿数据
             value = sheet.cell(row=lineNum, column=columnNum).value
             lineList.append(value)
-        # if lineNum == 2:
-        #     #创建一个班级
-        #     # department = Department.departmentManage.filter(dname=lineList[3])
-        #     # print(lineList)
-        #     #先获取班级
-        #     mclass = Mclass.mclassManager.filter(cno='200' + course_id)
-        #     if len(mclass) > 0:
-        #         mclass = mclass[0]
-        #     else:
-        #         mclass = Mclass.mclassManager.createMclass('200' + course_id, course.name, str(lineList[1]), department, course)
-        #         mclass.save()
+        if lineNum == 2:
+            #创建一个班级
+            # department = Department.departmentManage.filter(dname=lineList[2])
+            # print(lineList)
+            #先获取班级
+            mclass = Mclass.mclassManager.filter(cno='200' + course_id)
+            if len(mclass) > 0:
+                mclass = mclass[0]
+            else:
+                mclass = Mclass.mclassManager.createMclass('200' + course_id, course.name, str(lineList[1]), department, course)
+                mclass.save()
         if lineNum > 1:
             dic = {
                 'stu_number': lineList[0],
@@ -772,7 +774,7 @@ def load_studentinfo(request):
             diclist.append(dic)
             try:
                 
-                student = Student.studentManager.createStudent(lineList[0], lineList[1], lineList[4], '/upfile/template/icon.jpg', str(lineList[3]), "", None, department)
+                student = Student.studentManager.createStudent(lineList[0], lineList[1], lineList[4], '/upfile/template/icon.jpg', str(lineList[3]), "", mclass, department)
                 # print('here')
                 student.save()
             except Exception as e:
@@ -782,7 +784,7 @@ def load_studentinfo(request):
 
     os.remove(studentstorepath)
     # print(mclass)
-    students = Student.studentManager.all()
+    students = Student.studentManager.filter(isDelete = False, mclass=mclass)
     studic = []
     for item in students:
         dic = {
@@ -809,19 +811,19 @@ def create_class_set_routes(request):
     stu_grade = json.loads(request.body)['grade']
     item_snos = json.loads(request.body)['snos']
     course = Course.courseManager.get(isDelete=False, no=course_id)
-    mclass = Mclass.mclassManager.filter(isDelete=False, cno='200'+course_id)
-    if len(mclass) == 0:
-        mclass = Mclass.mclassManager.createMclass("200" + course_id, course.name, stu_grade, course.dno, course)
-        mclass.save()
+    mclass = Mclass.mclassManager.get(isDelete=False, cno='200'+course_id)
+        # mclass = Mclass.mclassManager.createMclass("200" + course_id, course.name, stu_grade, course.dno, course)
+        # mclass.save()
+        # mclass = Mclass.mclassManager.get(cno="200"+course_id)
         #向学生表中写密码和班级
-        for sno in item_snos:
-            student = Student.studentManager.get(isDelete=False, sno=sno, mclass=None)
-            obj = hashlib.md5(sno.encode())  # 实例化md5的时候可以给传个参数，这叫加盐
-            obj.update("123456".encode("utf-8"))  # 是再加密的时候传入自己的一块字节，
-            secret = obj.hexdigest()
-            student.password = secret
-            student.mclass = mclass
-            student.save()
+    for sno in item_snos:
+        student = Student.studentManager.get(isDelete=False, sno=sno, mclass=mclass)
+        obj = hashlib.md5(sno.encode())  # 实例化md5的时候可以给传个参数，这叫加盐
+        obj.update("123456".encode("utf-8"))  # 是再加密的时候传入自己的一块字节，
+        secret = obj.hexdigest()
+        student.password = secret
+        student.mclass = mclass
+        student.save()
     
     return HttpResponse(json.dumps({
         'code': 20000,
@@ -1177,21 +1179,40 @@ def delete_course_cascade(course):
     # 删除课程对应的缩略图
     fileDir = os.path.join(settings.MEDIA_ROOT, 'course_img')
     thumbnail_path = os.path.join(fileDir, course.image.split('/')[-1])
+    mclass = Mclass.mclassManager.get(isDelete=False, con=course.pk)
     try:
         os.remove(thumbnail_path)
-    except:
-        pass
+    except Exception as e:
+        print(e)
 
     # 删除课程对应的资源
     files = File.fileManager.filter(no=course.pk)
     for file_item in files:
+        print(file_item)
         fileDir = os.path.join(settings.MEDIA_ROOT, 'source')
         filePath = os.path.join(fileDir, file_item.url.split('/')[-1])
         file_item.isDelete = True
+        file_item.delete()
         try:
             os.remove(filePath)
-        except:
-            pass
+        except Exception as e:
+            print(e)
+            
+    
+    # 删除学生以及删除学生的路由
+    students = Student.studentManager.filter(isDelete=False, mclass=mclass)
+    for student in students:
+        for index in range(1,10):
+            try:
+                route = StudentRoutesMap.studentRoutesMapManager.get(stu_no=student.sno)
+                route.delete()
+            except:
+                pass
+        student.isDelete = True
+        student.delete()
+    
+    # 删除class
+    mclass.delete()
     
     # 删除课程下的所有任务
     try:
@@ -1202,16 +1223,25 @@ def delete_course_cascade(course):
                 fileDir = os.path.join(settings.MEDIA_ROOT, 'teacher_task')
                 filePath = os.path.join(fileDir, work.url.split('/')[-1])
                 os.remove(filePath)
-            except:
+            except Exception as e:
+                print(e)
                 pass
             if work is not None:
+                work.isDelete = True
                 work.delete()
             if homework is not None:
+                homework.isDelete = True
                 homework.delete()
-    except:
+    except Exception as e:
+        print(e)
         pass
     # print('hello')
-    course.delete()
+    try:
+        course.isDelete = True
+        course.delete()
+    except Exception as e:
+        print(e)
+        pass
     # print('hello')
 
 
@@ -1292,8 +1322,9 @@ def admin_delteacher(request):
         courses = Course.courseManager.filter(tno=teacher)
         for course in courses:
             delete_course_cascade(course)
-    except:
-        pass
+    except Exception as e:
+        print(e)
+        
 
     teacher.isDelete = True
     teacher.save()

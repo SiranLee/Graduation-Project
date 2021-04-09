@@ -1,1 +1,0 @@
-InspectorSettingsFormat:1.0
