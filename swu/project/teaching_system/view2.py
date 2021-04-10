@@ -840,11 +840,11 @@ def del_displine(request):
     #     }))
 
 def modify_read_limit(request):
-    source_id = request.POST.get('source_id')
-    read_limit = request.POST.get('read_limit')
+    source_id = json.loads(request.body)['source_id']
+    read_limit = json.loads(request.body)['read_limit']
 
-    source = Source.sourceManager.get(pk=source_id)
-    source.not_available2all = True if read_limit=="true" else False
+    source = File.fileManager.get(pk=source_id)
+    source.not_available2all = read_limit
     source.save()
 
     return HttpResponse(json.dumps({
