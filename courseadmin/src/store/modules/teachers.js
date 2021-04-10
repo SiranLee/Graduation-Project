@@ -26,7 +26,8 @@
   getPDF,
   getTasksByCourse,
   submitSingleScore,
-  creatClassAndSetRoutes } from '@/api/teacher'
+  creatClassAndSetRoutes,
+  searchWithNo } from '@/api/teacher'
 
 const actions = {
 // 获取教师教授的课程
@@ -223,8 +224,14 @@ const actions = {
     return Promise.reject(result)
   },
   async creatClassAndSetRoutes({commit}, data){
-    console.log(data)
     const result = await creatClassAndSetRoutes(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async searchWithNo({commit}, data){
+    const result = await searchWithNo(data)
     if(result){
       return result
     }

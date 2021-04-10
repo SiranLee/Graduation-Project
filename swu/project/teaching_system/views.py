@@ -937,6 +937,54 @@ def search_student(request):
         }
     }))
 
+def search_with_no(request):
+    major_id = request.GET.get('major_id')
+    dp = Department.departmentManage.get(dno=major_id)
+    course_id = request.GET.get('course_id')
+    cs = Course.courseManager.get(no=course_id)
+    stu_no = request.GET.get('stuNo')
+    page = request.GET.get('page')
+    limit = int(request.GET.get('limit'))
+
+    students = Student.studentManager.filter(department=dp)
+
+    source = []
+    for item in students:
+        if item.sno == stu_no and item.mclass.con.no == course_id:
+            source.append(item)
+    slen = len(source)
+    if int(page) * int(limit) < slen:
+        source = source[(int(page) - 1) * limit:(int(page) - 1) * limit + limit]
+    if int(page) * int(limit) - slen < limit and int(page) * int(limit) > slen:
+        source = source[(int(page) - 1) * limit:slen - (int(page) - 2) * limit]
+    if int(page) * int(limit) - slen > limit:
+        return HttpResponse(json.dumps({
+            'code': 20000,
+            'data': {
+                'total': 0,
+                'stus': [],
+            }
+        }))
+
+    list = []
+    count = len(source)
+    for item in source:
+        dic = {
+            'stu_number': item.sno,
+            'stu_grade': item.grade,
+            'stu_major': dp.dname,
+            'stu_class': item.cs,
+            'name': item.sname,
+            'course': cs.name
+        }
+        list.append(dic)
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'total': slen,
+            'stus': list,
+        }
+    }))
 def reset_password(request):
     # print(request.body)
     # student_id = request.POST.get('id')
@@ -1412,6 +1460,35 @@ def search_teacher(request):
             'teachers': list,
         }
     }))
+
+def search_teacher_with_no(request):
+    tea_no = request.GET.get('teaNo')
+    teachers = Teacher.teacherManage.filter(tno=tea_no)
+
+    array = []
+    count = len(teachers)
+    for item in teachers:
+        courses = item.course_set.all()
+        courseList = []
+        for course in courses:
+            courseList.append(course.name)
+        dic = {
+            'tea_number': item.tno,
+            'tea_name': item.tname,
+            'tea_position': item.botany,
+            'tea_major': item.department.dname,
+            'teacher_course': courseList
+        }
+        array.append(dic)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'total': count,
+            'teachers': array
+        }
+    }))
+
 
 def get_teachertemplate(request):
     return HttpResponse(json.dumps({

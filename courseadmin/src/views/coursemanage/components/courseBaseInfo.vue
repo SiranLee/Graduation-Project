@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :label-position="labelPosition" label-width="125px" :model="form">
+    <el-form :label-position="labelPosition" label-width="130px" :model="form">
       <el-form-item label="请选择资源类型">
         <el-select v-model="form.selectValue" placeholder="请选择">
           <el-option
@@ -18,6 +18,9 @@
         <div>
           <editor :content="form.describe" :catch-data="contentChange" />
         </div>
+      </el-form-item>
+      <el-form-item label="仅该课程学生可见" style="font-size:13px">
+       <el-switch v-model="form.available2all" active-color="#13ce66" inactive-color="#ccc"></el-switch>
       </el-form-item>
       <el-form-item label="资源上传">
         <el-upload
@@ -64,6 +67,7 @@ export default {
     return {
       labelPosition: 'right',
       form: {
+        available2all: true,
         selectValue: '',
         fileList: [],
         describe: '',

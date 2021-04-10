@@ -82,6 +82,8 @@ urlpatterns = [
     re_path(r'^del_displine/$', view2.del_displine, name='del_displine'),
     re_path(r'^get_all_majors/$', views.get_all_majors, name='get_all_majors'),
     re_path(r'^create_class_set_routes/$', views.create_class_set_routes, name="create_class_set_routes"),
+    re_path(r'^search_teacher_with_no/$', views.search_teacher_with_no, name="search_teacher_with_no"),
+    re_path(r'^search_with_no/$', views.search_with_no, name="search_with_no"),
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),
     re_path(r'^getImg/$', views.getImg, name='getImg'),

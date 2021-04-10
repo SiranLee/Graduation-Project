@@ -230,3 +230,10 @@ export function creatClassAndSetRoutes(data){
   })
 }
 
+export function searchWithNo(data){
+  return request({
+    url: '/search_with_no/',
+    method: 'get',
+    params: data
+  })
+}

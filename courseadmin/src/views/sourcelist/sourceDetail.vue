@@ -114,6 +114,7 @@ export default {
           this.info.intro = res.data.course_intro
           const result = await this.$store.dispatch('teachers/getSourceListType', { course_id: course_id, page: this.currentPage, limit: this.limit })
           if (result.data) {
+            // 在这里判断资源的可见性
             this.sourceList = result.data.list
             this.total = result.data.listTotal
           }

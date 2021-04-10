@@ -20,7 +20,8 @@
   submitDisciplineChange,
   addDiscipline,
   addRouteForDiscipline,
-  delDiscipline } from '@/api/admin'
+  delDiscipline,
+  searchTeacherWithNo } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -173,6 +174,13 @@ const actions = {
   async delDiscipline({ commit }, data) {
     const result = await delDiscipline(data)
     if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async searchTeacherWithNo({commit}, data){
+    const result = await searchTeacherWithNo(data)
+    if(result){
       return result
     }
     return Promise.reject(result)

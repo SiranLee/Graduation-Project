@@ -24,6 +24,13 @@
         @input="rollBack"
       />
       <el-button type="primary" @click="search">搜索</el-button>
+      <el-input
+        :value="teaNo"
+        placeholder="请输入教师工号"
+        style="width: 15%;"
+        @input="rollBackForNo"
+      />
+      <el-button type="primary" @click="searchWithNo">搜索</el-button>
       <upload :is-disable="false" :loading="loading" :emit-file="getFile" />
       <a class="downloadLink" :href="excelTemplate" download>教师表模板</a>
     </div>
@@ -126,6 +133,7 @@ export default {
   },
   data() {
     return {
+      teaNo: "",
       total: 0,
       pageSize: 10,
       currentPage: 1,
@@ -409,10 +417,29 @@ export default {
         this.tableData = data.teachers
       }
     },
+    async searchWithNo(){
+      const { data } = await this.$store.dispatch('admin/searchTeacherWithNo',{ teaNo: this.teaNo})
+      if(data){
+        data.teachers.forEach((item, index) => {
+          item.id = index + 1
+          item.courseStr = item.teacher_course.join(',')
+        })
+        this.total = data.total
+        this.pageSize = data.total
+        this.tableData = data.teachers
+      }
+    },
     rollBack(v) {
       this.keyWord = v
       if (v.length === 0) {
         this.pageSize = 10
+        this.askForTeachers()
+      }
+    },
+    rollBackForNo(v){
+      this.teaNo = v
+      if(v.length === 0){
+        this.pageSize = 10;
         this.askForTeachers()
       }
     }

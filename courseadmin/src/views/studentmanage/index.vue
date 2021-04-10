@@ -6,8 +6,13 @@
           <el-row>
             <el-col :span="3"><filter-widget v-model="selmajor" :emit-change="majorchange" hint="请选择专业" :options="optionsMajor" /></el-col>
             <el-col :span="3"><filter-widget v-model="selcourse" :emit-change="courseChange" hint="请选择课程" :options="optionsCourse" /></el-col>
-            <el-col :span="3"><el-input v-model="keyWord" placeholder="请输入学生名称" @input="keyChange" /></el-col>
+
+            <el-col :span="3"><el-input v-model="keyWord" placeholder="请输入学生姓名" @input="keyChange" /></el-col>
             <el-col :span="1"><el-button type="primary" @click="search">搜索</el-button></el-col>
+            <el-col :span="0.5"><div style="width:10px;height:10px"/></el-col>
+            <el-col :span="3"><el-input v-model="stuNo" placeholder="请输入学生学号" @input="keyChange" /></el-col>
+            <el-col :span="1"><el-button type="primary" @click="searchWithNo">搜索</el-button></el-col>
+
             <el-col :span="2"><upload :emit-file="getFile" :loading="upload_loading"/></el-col>
             <el-col :span="2"><el-button type="success"><a :href="templateLink" download>表模板</a></el-button></el-col>
           </el-row>
@@ -39,6 +44,7 @@ export default {
   },
   data() {
     return {
+      stuNo: '',
       keyWord: '',
       selcourse: '',
       selmajor: '',
@@ -117,6 +123,18 @@ export default {
         })
       }
       const { data } = await this.$store.dispatch('teachers/searchStu', { major_id: this.selmajor, course_id: this.selcourse, keyword: this.keyWord, limit: this.page_size, page: this.currentPage })
+      this.tabData = data.stus
+      this.total = data.total
+      this.loading = false
+    },
+    async searchWithNo(){
+      if (!this.selcourse || !this.selmajor || !this.stuNo) {
+        return this.$message({
+          message: '请先选择下拉菜单的选项',
+          type: 'warning'
+        })
+      }
+      const { data } = await this.$store.dispatch('teachers/searchWithNo', { major_id: this.selmajor, course_id: this.selcourse, stuNo: this.stuNo, limit: this.page_size, page: this.currentPage })
       this.tabData = data.stus
       this.total = data.total
       this.loading = false
