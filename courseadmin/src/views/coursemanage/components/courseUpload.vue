@@ -29,8 +29,7 @@
       />
       <el-table-column align="center" label="资源文件" width="180">
         <template slot-scope="scope">
-          <span
-          >{{ scope.row.upload_filename }}</span>
+          <span>{{ scope.row.upload_filename }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="资源说明" width="140">
@@ -45,9 +44,9 @@
       <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
           <el-button
-          type="primary"
-          size="small"
-          @click="downloadFile(link + scope.row.upload_filelink)"
+            type="primary"
+            size="small"
+            @click="downloadFile(link + scope.row.upload_filelink)"
           >下载</el-button>
           <el-button
             v-if="deletable"
@@ -56,13 +55,14 @@
             @click="remove(scope.row.upload_id)"
           >删除</el-button>
           <el-popover
+            v-if="deletable"
             placement="top"
             width="150"
             trigger="click"
-           >
-            <el-switch style="display: block; text-align:center" active-text="是" inactive-text="否" v-model="scope.row.read_limit" @change="switchValueChanged(scope.row)" active-color="#13ce66" inactive-color="#ccc"></el-switch>
+          >
+            <el-switch v-model="scope.row.read_limit" style="display: block; text-align:center" active-text="是" inactive-text="否" active-color="#13ce66" inactive-color="#ccc" @change="switchValueChanged(scope.row)" />
             <p style="text-align: center; font-weight: bolder; margin-block-end: 0;">仅该课程学生可见</p>
-            <el-button size="small" slot="reference">设置可见性</el-button>
+            <el-button slot="reference" size="small">设置可见性</el-button>
           </el-popover>
         </template>
       </el-table-column>
@@ -128,12 +128,17 @@ export default {
       this.dialogVisible = true
       this.sourceEx = row.upload_intro
     },
-    downloadFile(url){
-      window.open(url);
+    downloadFile(url) {
+      window.open(url)
     },
-    async switchValueChanged(row){
-     const { data } = await this.$store.dispatch('teachers/modifySourceReadLimit', {source_id: row.upload_id, read_limit: row.read_limit});
-     
+    async switchValueChanged(row) {
+      const { data } = await this.$store.dispatch('teachers/modifySourceReadLimit', { source_id: row.upload_id, read_limit: row.read_limit })
+      if(data.message === 'ok'){
+        this.$message({
+          message: '设置成功',
+          type: 'success'
+        })
+      }
     }
   }
 }

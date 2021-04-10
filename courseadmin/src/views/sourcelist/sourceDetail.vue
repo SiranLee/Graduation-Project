@@ -69,7 +69,7 @@ export default {
   components: {
     Search,
     courseUploaded,
-    releasedTasks,
+    releasedTasks
   },
   data() {
     return {
@@ -89,7 +89,7 @@ export default {
       limit: detailConf.limit,
 
       taskTotal: 0,
-      taskList:[],
+      taskList: [],
 
       selectValue: '',
       searchValue: ''
@@ -114,34 +114,33 @@ export default {
           const result = await this.$store.dispatch('teachers/getSourceListType', { course_id: course_id, page: this.currentPage, limit: this.limit })
           if (result.data) {
             // 在这里判断资源的可见性
-            let $this = this
+            const $this = this
             result.data.list.forEach(element => {
-              if($this.$store.state.user.course_nos.indexOf(course_id) >= 0 || !element.read_limit){
+              if ($this.$store.state.user.course_nos.indexOf(course_id) >= 0 || !element.read_limit) {
                 $this.sourceList.push(element)
               }
-            });
+            })
           }
           const types = await this.$store.dispatch('teachers/getTypes')
           if (types.data) {
             this.options = types.data.types
           }
         }
-      
       })
       .catch(err => { console.log(err) })
 
-      const res3 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: course_id, page: this.currentPage, limit: this.limit })
-      if (res3.code === 20000) {
+    const res3 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: course_id, page: this.currentPage, limit: this.limit })
+    if (res3.code === 20000) {
       this.taskTotal = parseInt(res3.data.listTotal)
       this.taskList = res3.data.list
     }
   },
   methods: {
-    async taskpageChange(page){
+    async taskpageChange(page) {
       const res2 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: this.$route.params.courseid, page: page, limit: this.limit })
       if (res2.code === 20000) {
         this.taskTotal = parseInt(res2.data.listTotal)
-        this.currentPage = page;
+        this.currentPage = page
         this.taskList = res2.data.list
         this.currentPage = page
       }

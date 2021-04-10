@@ -13,7 +13,7 @@ export function getMajors(data) {
   return request({
     url: '/get_department/',
     method: 'get',
-    params:data
+    params: data
   })
 }
 
@@ -91,7 +91,7 @@ export function searchByKeyWord(data) {
   })
 }
 
-export function getAllMajors(){
+export function getAllMajors() {
   return request({
     url: '/get_all_majors/',
     method: 'get'

@@ -205,43 +205,43 @@ export default {
     })
 
     // 请求课程
-    this.$store.dispatch('teachers/getGrade', {id: this.$store.state.user.id})
-    .then(res => {
-      this.optionsGrade = res.data.grades
-      this.optionsMajor = res.data.majors
-      this.selGrade = this.optionsGrade[0].value
-      this.selMajor = this.optionsMajor[0].value
-      return this.$store.dispatch('teachers/getShortCourse', { id: this.$store.state.user.id, major: this.selMajor})
-    })
-    .then(res => {
-      this.optionsCourse = res.data.courses
-      this.selCourse = this.optionsCourse[0].course_id
-      return this.$store.dispatch('teachers/getTasksByCourse', {course_id: this.selCourse})
-    })
-    .then(res => {
-      this.optionsStatus = res.data.status
-      this.selStatus = this.optionsStatus[0].value
-      this.optionsTask = res.data.tasks
-      this.selTask = this.optionsTask[0].value
-      return this.$store.dispatch('teachers/getPDF', {
-        id: this.$store.state.user.id,
-        course_id: this.selCourse,
-        grade_id: this.selGrade,
-        task_id: this.selTask,
-        major_id: this.selMajor,
-        page: this.currentPage,
-        limit: this.limit,
-        status: this.selStatus
+    this.$store.dispatch('teachers/getGrade', { id: this.$store.state.user.id })
+      .then(res => {
+        this.optionsGrade = res.data.grades
+        this.optionsMajor = res.data.majors
+        this.selGrade = this.optionsGrade[0].value
+        this.selMajor = this.optionsMajor[0].value
+        return this.$store.dispatch('teachers/getShortCourse', { id: this.$store.state.user.id, major: this.selMajor })
       })
-    })
-    .then(res => {
-      res.data.list.forEach((item, index) => {
-        item.index = index + 1
+      .then(res => {
+        this.optionsCourse = res.data.courses
+        this.selCourse = this.optionsCourse[0].course_id
+        return this.$store.dispatch('teachers/getTasksByCourse', { course_id: this.selCourse })
       })
-      this.tableData = res.data.list
-      this.tableLoading = false
-    })
-    .catch(() => { return })
+      .then(res => {
+        this.optionsStatus = res.data.status
+        this.selStatus = this.optionsStatus[0].value
+        this.optionsTask = res.data.tasks
+        this.selTask = this.optionsTask[0].value
+        return this.$store.dispatch('teachers/getPDF', {
+          id: this.$store.state.user.id,
+          course_id: this.selCourse,
+          grade_id: this.selGrade,
+          task_id: this.selTask,
+          major_id: this.selMajor,
+          page: this.currentPage,
+          limit: this.limit,
+          status: this.selStatus
+        })
+      })
+      .then(res => {
+        res.data.list.forEach((item, index) => {
+          item.index = index + 1
+        })
+        this.tableData = res.data.list
+        this.tableLoading = false
+      })
+      .catch(() => { return })
   },
   methods: {
     getData(data) {
@@ -265,13 +265,13 @@ export default {
         this.optionsStatus = res.data.status
         if (suffix === 'Course') {
           this.selStatus = this.optionsStatus[0].value
-          if(res.data.tasks.length == 0){
-            this.tableData.splice(0, this.tableData.length);
-            this.optionsTask.splice(0, this.optionsTask.length);
-            this.selTask = '';
-            this.tableLoading = false;
-            return;
-          }else{
+          if (res.data.tasks.length == 0) {
+            this.tableData.splice(0, this.tableData.length)
+            this.optionsTask.splice(0, this.optionsTask.length)
+            this.selTask = ''
+            this.tableLoading = false
+            return
+          } else {
             this.optionsTask = res.data.tasks
             this.selTask = this.optionsTask[0].value
           }

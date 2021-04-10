@@ -20,7 +20,7 @@
         </div>
       </el-form-item>
       <el-form-item label="仅该课程学生可见" style="font-size:13px">
-       <el-switch v-model="form.not_available2all" active-color="#13ce66" inactive-color="#ccc"></el-switch>
+        <el-switch v-model="form.not_available2all" active-color="#13ce66" inactive-color="#ccc" />
       </el-form-item>
       <el-form-item label="资源上传">
         <el-upload
@@ -158,7 +158,7 @@ export default {
       formData.append('title', this.form.title)
       formData.append('course_id', this.$route.params.course_id)
       formData.append('count', this.form.fileList.length)
-      formData.append('not_available2all', this.form.not_available2all?'True':'False')
+      formData.append('not_available2all', this.form.not_available2all ? 'True' : 'False')
       this.form.fileList.forEach((item, index) => { formData.append('file' + index, item.raw) })
       const config = {
         headers: {

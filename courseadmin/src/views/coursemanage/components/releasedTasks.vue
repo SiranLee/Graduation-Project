@@ -54,7 +54,6 @@
             type="danger"
             size="small"
             @click="remove(scope.row.task_id)"
-            
           >删除</el-button>
         </template>
       </el-table-column>
@@ -85,7 +84,7 @@
             >{{ scope.row.task_filename }}</a>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="操作" v-if="deletable">
+        <el-table-column v-if="deletable" align="center" label="操作">
           <template slot-scope="scope">
             <el-button
               type="danger"
@@ -118,7 +117,7 @@ export default {
     deletable: {
       type: Boolean,
       default: true
-    },
+    }
   },
   data() {
     return {

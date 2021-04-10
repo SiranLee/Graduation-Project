@@ -171,7 +171,7 @@ export function delDiscipline(data) {
   })
 }
 
-export function searchTeacherWithNo(data){
+export function searchTeacherWithNo(data) {
   return request({
     url: '/search_teacher_with_no/',
     method: 'get',

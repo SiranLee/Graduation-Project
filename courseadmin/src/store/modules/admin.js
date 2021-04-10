@@ -178,9 +178,9 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async searchTeacherWithNo({commit}, data){
+  async searchTeacherWithNo({ commit }, data) {
     const result = await searchTeacherWithNo(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

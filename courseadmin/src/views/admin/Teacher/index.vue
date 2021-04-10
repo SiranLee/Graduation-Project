@@ -107,7 +107,7 @@
             <div class="itemZone">
               <span>课程: </span><el-input v-model="editPermissionRow.courseStr" disabled />
             </div>
-            <el-button type="success" style="width:100%; margin-top: 50px" @click="confirmEditPermission" :loading="permissionLoading">确定</el-button>
+            <el-button type="success" style="width:100%; margin-top: 50px" :loading="permissionLoading" @click="confirmEditPermission">确定</el-button>
           </el-col>
           <el-col :span="14" style="height: 100%;">
             <div style="overflow-y: scroll; height: 100%">
@@ -133,7 +133,7 @@ export default {
   },
   data() {
     return {
-      teaNo: "",
+      teaNo: '',
       total: 0,
       pageSize: 10,
       currentPage: 1,
@@ -311,15 +311,15 @@ export default {
       this.removeCheckedItems.splice(0, this.removeCheckedItems.length)
     },
     async confirmEditPermission() {
-      this.permissionLoading = true;
+      this.permissionLoading = true
       this.$store.dispatch('admin/setPermissionForTeacher', { add_permission: this.addCheckedItems, del_permission: this.removeCheckedItems, id: this.editPermissionRow.tea_number })
         .then(res => {
           if (res.data.message == 'ok') {
             this.$message({
               message: '操作成功',
               type: 'success'
-            });
-            this.permissionLoading = false;
+            })
+            this.permissionLoading = false
           }
           this.addCheckedItems.splice(0, this.addCheckedItems.length)
           this.removeCheckedItems.splice(0, this.removeCheckedItems.length)
@@ -332,7 +332,7 @@ export default {
         deleteButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        item.del_wait = true;
+        item.del_wait = true
         const { data } = await this.$store.dispatch('admin/deleteTeacher', {
           id: item.tea_number
         })
@@ -344,7 +344,7 @@ export default {
           this.tableData = this.tableData.filter(
             tea => tea.tea_number !== item.tea_number
           )
-          item.del_wait = false;
+          item.del_wait = false
         }
       })
     },
@@ -417,9 +417,9 @@ export default {
         this.tableData = data.teachers
       }
     },
-    async searchWithNo(){
-      const { data } = await this.$store.dispatch('admin/searchTeacherWithNo',{ teaNo: this.teaNo})
-      if(data){
+    async searchWithNo() {
+      const { data } = await this.$store.dispatch('admin/searchTeacherWithNo', { teaNo: this.teaNo })
+      if (data) {
         data.teachers.forEach((item, index) => {
           item.id = index + 1
           item.courseStr = item.teacher_course.join(',')
@@ -436,10 +436,10 @@ export default {
         this.askForTeachers()
       }
     },
-    rollBackForNo(v){
+    rollBackForNo(v) {
       this.teaNo = v
-      if(v.length === 0){
-        this.pageSize = 10;
+      if (v.length === 0) {
+        this.pageSize = 10
         this.askForTeachers()
       }
     }

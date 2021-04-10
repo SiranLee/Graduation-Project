@@ -37,7 +37,7 @@
         </div>
       </el-col>
       <el-col :span="8" class="middleBanner">
-        <div id="pie" class="grid-content midbanner" style="height: 85%"/>
+        <div id="pie" class="grid-content midbanner" style="height: 85%" />
         <div class="btnConatiner">
           <el-button
             id="pieBtn"
@@ -92,9 +92,9 @@
               :value="item.value"
             />
           </el-select>
-          <div id="stack" style="padding-top: 20px; height: 85%"/>
+          <div id="stack" style="padding-top: 20px; height: 85%" />
         </div>
-        
+
         <div class="btnConatiner">
           <el-button
             id="Btn"
@@ -147,10 +147,10 @@ export default {
       ],
       staticsData: {},
       stackBarData: [],
-      
+
       sourcesListData: [],
       majorOptions: [],
-      courseOptions:[],
+      courseOptions: [],
       labels: [],
       videos: [],
       images: [],
@@ -158,10 +158,10 @@ export default {
       selMajor: '',
       dep_stus: [],
 
-      task_times:[],
-      total_tasks:[],
-      checked_tasks:[],
-      unchecked_tasks:[],
+      task_times: [],
+      total_tasks: [],
+      checked_tasks: [],
+      unchecked_tasks: [],
 
       selCourse: '',
       pieBtnDownloading: false,
@@ -455,27 +455,27 @@ export default {
       this.makeStackBarData()
       this.drawStackBar()
     },
-    stackBarSelectChange(v){
-      this.task_times.splice(0, this.task_times.length);
-      this.checked_tasks.splice(0, this.task_times.length);
-      this.unchecked_tasks.splice(0, this.task_times.length);
-      this.total_tasks.splice(0, this.task_times.length);
-      this.$store.dispatch('admin/getHomeworkData', {dep_id: this.selMajor, course_id: this.selCourse})
-      .then(res => {
-        res.data.checked_data.forEach(item => {
-          $this.task_times.push(item.times)
-          $this.checked_tasks.push(item.status.checked)
-          $this.total_tasks.push(item.status.total)
-          $this.unchecked_tasks.push(item.status.unchecked)
-        });
-        $this.drawStackBar_2()
-      })
-      .catch(()=>{})
+    stackBarSelectChange(v) {
+      this.task_times.splice(0, this.task_times.length)
+      this.checked_tasks.splice(0, this.task_times.length)
+      this.unchecked_tasks.splice(0, this.task_times.length)
+      this.total_tasks.splice(0, this.task_times.length)
+      this.$store.dispatch('admin/getHomeworkData', { dep_id: this.selMajor, course_id: this.selCourse })
+        .then(res => {
+          res.data.checked_data.forEach(item => {
+            $this.task_times.push(item.times)
+            $this.checked_tasks.push(item.status.checked)
+            $this.total_tasks.push(item.status.total)
+            $this.unchecked_tasks.push(item.status.unchecked)
+          })
+          $this.drawStackBar_2()
+        })
+        .catch(() => {})
     },
     // todo
     drawStackBar_2() {
       const stackBar2 = echarts.init(document.getElementById('stack'))
-      
+
       const option = {
         tooltip: {
           trigger: 'axis',

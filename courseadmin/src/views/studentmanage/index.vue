@@ -9,11 +9,11 @@
 
             <el-col :span="3"><el-input v-model="keyWord" placeholder="请输入学生姓名" @input="keyChange" /></el-col>
             <el-col :span="1"><el-button type="primary" @click="search">搜索</el-button></el-col>
-            <el-col :span="0.5"><div style="width:10px;height:10px"/></el-col>
+            <el-col :span="0.5"><div style="width:10px;height:10px" /></el-col>
             <el-col :span="3"><el-input v-model="stuNo" placeholder="请输入学生学号" @input="keyChange" /></el-col>
             <el-col :span="1"><el-button type="primary" @click="searchWithNo">搜索</el-button></el-col>
 
-            <el-col :span="2"><upload :emit-file="getFile" :loading="upload_loading"/></el-col>
+            <el-col :span="2"><upload :emit-file="getFile" :loading="upload_loading" /></el-col>
             <el-col :span="2"><el-button type="success"><a :href="templateLink" download>表模板</a></el-button></el-col>
           </el-row>
         </div>
@@ -65,8 +65,8 @@ export default {
     }
   },
   async mounted() {
-    const { data } = await this.$store.dispatch('publicOpen/getMajors',{id:this.$store.state.user.id});
-    const $this = this;
+    const { data } = await this.$store.dispatch('publicOpen/getMajors', { id: this.$store.state.user.id })
+    const $this = this
     data.majors.forEach(item => { $this.optionsMajor.push({ label: item.title, value: item.major_id }) })
     this.templateLink = process.env.VUE_APP_BASE_API + data.link
     console.log(this.optionsMajor)
@@ -86,9 +86,9 @@ export default {
   methods: {
     async majorchange(v) {
       this.selmajor = v
-      this.optionsCourse.splice(0, this.optionsCourse.length);
-      const { data } = await this.$store.dispatch('teachers/getShortCourse', {id: this.$store.state.user.id ,major: v})
-      data.courses.forEach(item=>{this.optionsCourse.push({label:item.title,value:item.course_id})})
+      this.optionsCourse.splice(0, this.optionsCourse.length)
+      const { data } = await this.$store.dispatch('teachers/getShortCourse', { id: this.$store.state.user.id, major: v })
+      data.courses.forEach(item => { this.optionsCourse.push({ label: item.title, value: item.course_id }) })
       this.courseChange(this.optionsCourse[0].value)
     },
     courseChange(v) {
@@ -127,7 +127,7 @@ export default {
       this.total = data.total
       this.loading = false
     },
-    async searchWithNo(){
+    async searchWithNo() {
       if (!this.selcourse || !this.selmajor || !this.stuNo) {
         return this.$message({
           message: '请先选择下拉菜单的选项',
@@ -172,7 +172,7 @@ export default {
         })
           .then(() => {
             console.log(row)
-            this.$store.dispatch('teachers/deleteStu', { id: row.stu_number, course: this.selcourse})
+            this.$store.dispatch('teachers/deleteStu', { id: row.stu_number, course: this.selcourse })
               .then(res => {
                 if (res.data.message === 'ok') {
                   this.$message({
@@ -206,8 +206,8 @@ export default {
         .catch(() => { return })
     },
     async getFile(file) {
-      this.upload_loading = true;
-      this.loading = true;
+      this.upload_loading = true
+      this.loading = true
       const formData = new FormData()
       formData.append('major_id', this.selmajor)
       formData.append('course_id', this.selcourse)
@@ -215,27 +215,27 @@ export default {
       this.$store.dispatch('teachers/uploadFile', formData)
         .then(async res => {
           this.loading = false
-          let item_snos = []
-          let stugrade = "";
-          res.data.stus.forEach((item, index) => { 
-            item.id = index%10 + 1; 
+          const item_snos = []
+          let stugrade = ''
+          res.data.stus.forEach((item, index) => {
+            item.id = index % 10 + 1
             item_snos.push(item.stu_number)
             stugrade = item.stu_grade
           })
           this.total = res.data.total
-          this.tabData = res.data.stus.splice(0, this.page_size);
+          this.tabData = res.data.stus.splice(0, this.page_size)
           console.log(this.tabData)
-          const result = await this.$store.dispatch('teachers/creatClassAndSetRoutes', {course_id: this.selcourse, grade: stugrade, snos: item_snos})
-          this.upload_loading = false;
-          if(result.data.message == 'ok') {
+          const result = await this.$store.dispatch('teachers/creatClassAndSetRoutes', { course_id: this.selcourse, grade: stugrade, snos: item_snos })
+          this.upload_loading = false
+          if (result.data.message == 'ok') {
             this.$message({
-              message:'写入成功',
-              type:'success'
+              message: '写入成功',
+              type: 'success'
             })
-          }else{
+          } else {
             this.$message({
-              message:'网络错误，请稍后重试',
-              type:'danger'
+              message: '网络错误，请稍后重试',
+              type: 'danger'
             })
           }
         })

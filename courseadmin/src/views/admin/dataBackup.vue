@@ -213,7 +213,6 @@ export default {
       // 首先检查有没有漏掉的表
       const $this = this
       this.multiSelectSheets.forEach(item => {
-        
         if (!$this.eachSheetItems.find(e => e['sheetName'] === item)) {
           $this.$store.dispatch('admin/getFiledsForSheet', { 'sheet': item })
             .then(result => {
@@ -226,12 +225,10 @@ export default {
                 this.multibackup()
               }
             })
-        }else{
-          this.multibackup();
+        } else {
+          this.multibackup()
         }
       })
-
-      
     },
     multibackup() {
       const $this = this

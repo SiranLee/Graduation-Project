@@ -224,23 +224,23 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async creatClassAndSetRoutes({commit}, data){
+  async creatClassAndSetRoutes({ commit }, data) {
     const result = await creatClassAndSetRoutes(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async searchWithNo({commit}, data){
+  async searchWithNo({ commit }, data) {
     const result = await searchWithNo(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async modifySourceReadLimit({commit}, data){
+  async modifySourceReadLimit({ commit }, data) {
     const result = await modifySourceReadLimit(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

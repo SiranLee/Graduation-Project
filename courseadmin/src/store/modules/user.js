@@ -10,7 +10,7 @@ const state = {
   major: '',
   id: '',
   roles: null,
-  course_nos: null,
+  course_nos: null
 }
 
 const mutations = {

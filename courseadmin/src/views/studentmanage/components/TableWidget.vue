@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-table
+      v-loading="tableLoading"
       :data="tableData"
       border
       style="width: 100%"
-      v-loading="tableLoading"
     >
       <el-table-column
         prop="id"
@@ -70,7 +70,7 @@ export default {
       type: Array,
       default: () => []
     },
-    tableLoading:{
+    tableLoading: {
       type: Boolean,
       default: false
     }

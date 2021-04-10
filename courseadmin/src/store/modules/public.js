@@ -27,10 +27,10 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async getAllMajors({ commit }){
+  async getAllMajors({ commit }) {
     const result = await getAllMajors()
-    if(result){
-      return result;
+    if (result) {
+      return result
     }
     return Promise.reject(result)
   },

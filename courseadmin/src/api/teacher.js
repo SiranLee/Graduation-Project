@@ -222,7 +222,7 @@ export function submitSingleScore(data) {
   })
 }
 
-export function creatClassAndSetRoutes(data){
+export function creatClassAndSetRoutes(data) {
   return request({
     url: '/create_class_set_routes/',
     method: 'post',
@@ -230,7 +230,7 @@ export function creatClassAndSetRoutes(data){
   })
 }
 
-export function searchWithNo(data){
+export function searchWithNo(data) {
   return request({
     url: '/search_with_no/',
     method: 'get',
@@ -238,10 +238,10 @@ export function searchWithNo(data){
   })
 }
 
-export function modifySourceReadLimit(data){
+export function modifySourceReadLimit(data) {
   return request({
     url: '/modify_read_limit/',
     method: 'post',
-    params: data
+    data
   })
 }
