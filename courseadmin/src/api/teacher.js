@@ -237,3 +237,11 @@ export function searchWithNo(data){
     params: data
   })
 }
+
+export function modifySourceReadLimit(data){
+  return request({
+    url: '/modify_read_limit/',
+    method: 'post',
+    params: data
+  })
+}

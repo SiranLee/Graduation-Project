@@ -110,7 +110,7 @@ class Source(models.Model):
 class FileManager(models.Manager):
     def get_queryset(self):
         return super(FileManager, self).get_queryset().filter(isDelete=False)
-    def createFile(self, describe, url, title, filename, tno, sno, no, vtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())), isDelete=False):
+    def createFile(self, describe, url, title, filename,  not_available2all, tno, sno, no, vtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())), isDelete=False):
         stu = self.model()
         #print(type(grade))
         # stu.fno = fno
@@ -123,6 +123,7 @@ class FileManager(models.Manager):
         stu.sno = sno
         stu.no = no
         stu.isDelete = isDelete
+        stu.not_available2all = not_available2all
         return stu
 
 class File(models.Model):
@@ -134,6 +135,8 @@ class File(models.Model):
     title = models.CharField(max_length=30)
     filename = models.TextField()
     isDelete = models.BooleanField(default=False)
+    # 0对应false
+    not_available2all = models.BooleanField(default=False)
     tno = models.ForeignKey('Teacher', on_delete=models.CASCADE)
     sno = models.ForeignKey('Source', on_delete=models.CASCADE)
     no = models.ForeignKey('Course', on_delete=models.CASCADE)

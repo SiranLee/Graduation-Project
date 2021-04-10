@@ -106,7 +106,6 @@ export default {
     this.$store.dispatch('publicOpen/getSourceDetailBaseInfo', { course_id: course_id })
       .then(async res => {
         if (res.data) {
-          this.total = res.data.source_total
           this.info.stuTotal = res.data.stu_count
           this.info.title = res.data.course_name
           this.info.teacher = res.data.course_teacher
@@ -115,8 +114,12 @@ export default {
           const result = await this.$store.dispatch('teachers/getSourceListType', { course_id: course_id, page: this.currentPage, limit: this.limit })
           if (result.data) {
             // 在这里判断资源的可见性
-            this.sourceList = result.data.list
-            this.total = result.data.listTotal
+            let $this = this
+            result.data.list.forEach(element => {
+              if($this.$store.state.user.course_nos.indexOf(course_id) >= 0 || !element.read_limit){
+                $this.sourceList.push(element)
+              }
+            });
           }
           const types = await this.$store.dispatch('teachers/getTypes')
           if (types.data) {

@@ -27,7 +27,8 @@
   getTasksByCourse,
   submitSingleScore,
   creatClassAndSetRoutes,
-  searchWithNo } from '@/api/teacher'
+  searchWithNo,
+  modifySourceReadLimit } from '@/api/teacher'
 
 const actions = {
 // 获取教师教授的课程
@@ -232,6 +233,13 @@ const actions = {
   },
   async searchWithNo({commit}, data){
     const result = await searchWithNo(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async modifySourceReadLimit({commit}, data){
+    const result = await modifySourceReadLimit(data)
     if(result){
       return result
     }

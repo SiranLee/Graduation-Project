@@ -20,7 +20,7 @@
         align="center"
         prop="upload_type"
         label="资源类型"
-        width="180"
+        width="140"
       />
       <el-table-column
         align="center"
@@ -33,7 +33,7 @@
           >{{ scope.row.upload_filename }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="资源说明" width="180">
+      <el-table-column align="center" label="资源说明" width="140">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -42,7 +42,7 @@
           >查看</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="200">
+      <el-table-column align="center" label="操作" width="300">
         <template slot-scope="scope">
           <el-button
           type="primary"
@@ -55,6 +55,15 @@
             size="small"
             @click="remove(scope.row.upload_id)"
           >删除</el-button>
+          <el-popover
+            placement="top"
+            width="150"
+            trigger="click"
+           >
+            <el-switch style="display: block; text-align:center" active-text="是" inactive-text="否" v-model="scope.row.read_limit" @change="switchValueChanged(scope.row)" active-color="#13ce66" inactive-color="#ccc"></el-switch>
+            <p style="text-align: center; font-weight: bolder; margin-block-end: 0;">仅该课程学生可见</p>
+            <el-button size="small" slot="reference">设置可见性</el-button>
+          </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -121,6 +130,10 @@ export default {
     },
     downloadFile(url){
       window.open(url);
+    },
+    async switchValueChanged(row){
+     const { data } = await this.$store.dispatch('teachers/modifySourceReadLimit', {source_id: row.upload_id, read_limit: row.read_limit});
+     
     }
   }
 }

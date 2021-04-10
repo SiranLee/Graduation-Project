@@ -104,10 +104,10 @@ def login(request):
                 response = HttpResponse(
                     json.dumps({'code': 0, 'data': {'token': "",'message':'密码错误'}}))
         else:
-            studentuser = Student.studentManager.filter(sno=username)
-            if len(studentuser) > 0:
+            studentusers = Student.studentManager.filter(sno=username)
+            if len(studentusers) > 0:
                 #有这个用户
-                studentuser = studentuser[0]
+                studentuser = studentusers[0]
                 if studentuser.password == secret:
                     token = base64.b64encode(username.encode('utf-8')).decode()
                     request.session['role'] = 'student'
@@ -119,6 +119,7 @@ def login(request):
                         for index in range(1, 10):
                             studentRouteMap = StudentRoutesMap.studentRoutesMapManager.createStudentRoutesMap(username, index)
                             studentRouteMap.save()
+                    
                     response = HttpResponse(json.dumps({'code': 20000,
                                                         'data': {'token':token,'message':'验证成功', 'role':['student']}
                                                         }))
@@ -254,19 +255,25 @@ def check(request):
             'major': user[0].department.dname
         }}))
     else:
-        studentuser = Student.studentManager.filter(sno=id)
-        if len(studentuser) > 0:
+        studentusers = Student.studentManager.filter(sno=id)
+        if len(studentusers) > 0:
             #有这个用户
             #保存时间
             # current_date = str(datetime.datetime.now()).split()[0]
-            savetime = StudentTimeNow.studentTimeNowManager.createStudentTimeNow(studentuser[0].sno)
+            savetime = StudentTimeNow.studentTimeNowManager.createStudentTimeNow(studentusers[0].sno)
             savetime.save()
+            # 学生登录时查询已经选择的课程
+            course_nos = []
+            for student in studentusers:
+                mclass = student.mclass
+                course_nos.append(mclass.con.no)
             return HttpResponse(json.dumps({'code': 20000, 'data': {
-                        'avatar': studentuser[0].image,
-                        'name': studentuser[0].sname,
-                        'id': studentuser[0].sno,
+                        'avatar': studentusers[0].image,
+                        'name': studentusers[0].sname,
+                        'id': studentusers[0].sno,
                         'roles': ['student'],
-                        'major': studentuser[0].department.dname
+                        'major': studentusers[0].department.dname,
+                        'course_nos': course_nos
                     }}))
         else:
             admin = Admin.adminManage.filter(ano=id)
@@ -347,6 +354,7 @@ def up_source(request):
     # print(teacher)
     describe = request.POST.get('describe')
     source_type = request.POST.get('source_type')
+    not_available_2_all = request.POST.get('not_available2all')
     source = Source.sourceManager.get(sno=source_type)
     # print(source)
     count = request.POST.get('count')
@@ -359,7 +367,7 @@ def up_source(request):
             for info in file1.chunks():
                 fp.write(info)
         # print(os.path.join('/upfile/source', file1.name))
-        f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, teacher, source, course)
+        f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, not_available_2_all, teacher, source, course)
         f.save()
         fileList.append(f)
 
@@ -435,7 +443,8 @@ def get_source(request):
             'upload_intro': item.describe,
             'upload_filename': item.filename,
             'upload_filelink': item.url,
-            'upload_id': item.id
+            'upload_id': item.id,
+            'read_limit': item.not_available2all
         }
         list.append(dic)
     return HttpResponse(json.dumps({
