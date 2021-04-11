@@ -133,7 +133,7 @@ export default {
     },
     async switchValueChanged(row) {
       const { data } = await this.$store.dispatch('teachers/modifySourceReadLimit', { source_id: row.upload_id, read_limit: row.read_limit })
-      if(data.message === 'ok'){
+      if (data.message === 'ok') {
         this.$message({
           message: '设置成功',
           type: 'success'

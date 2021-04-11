@@ -53,7 +53,7 @@ export const constantRoutes = [
         meta: { title: '个人信息修改', icon: 'self', affix: true }
       }
     ]
-  },
+  }
   // {
   //   path: '/sourceCheck',
   //   component: Layout,
