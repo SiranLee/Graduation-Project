@@ -53,7 +53,27 @@ export const constantRoutes = [
         meta: { title: '个人信息修改', icon: 'self', affix: true }
       }
     ]
-  }
+  },
+  // {
+  //   path: '/sourceCheck',
+  //   component: Layout,
+  //   redirect: '/sourceCheck/sourceBrowse',
+  //   meta: { title: '资源相关', icon: 'relation', roles: ['admin'] },
+  //   children: [
+  //     {
+  //       path: 'sourceBrowse',
+  //       name: 'SourceBrowse',
+  //       component: () => import('@/views/admin/sourceCheck/sourceBrowse'),
+  //       meta: { title: '资源总览', icon: 'browse', roles: ['admin'] }
+  //     },
+  //     {
+  //       path: 'sourceCheck',
+  //       name: 'SourceCheck',
+  //       component: () => import('@/views/admin/sourceCheck/sourceCheck'),
+  //       meta: { title: '资源审核', icon: 'sourceCheck', roles: ['admin'] }
+  //     }
+  //   ]
+  // },
 ]
 export const routerMap = {
   Layout: Layout,
@@ -72,7 +92,9 @@ export const routerMap = {
   Teachers: () => import('@/views/admin/Teacher/index'),
   DataStatics: () => import('@/views/admin/dataStatics'),
   dataBackup: () => import('@/views/admin/dataBackup'),
-  DisciplineManagement: () => import('@/views/admin/disciplineManagement')
+  DisciplineManagement: () => import('@/views/admin/disciplineManagement'),
+  SourceBrowse: () => import('@/views/admin/sourceCheck/sourceBrowse'),
+  SourceCheck: () => import('@/views/admin/sourceCheck/sourceCheck')
 }
 // export const asyncRoutes = [
 //   {
