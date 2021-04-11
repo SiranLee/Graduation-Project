@@ -93,7 +93,7 @@
         :page-sizes="[10, 20, 30, 40]"
         :page-size="10"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="sourceToTal"
+        :total="sourceTotal"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -163,7 +163,7 @@ export default {
       type: Number,
       default: 1
     },
-    sourceToTal: {
+    sourceTotal: {
       type: Number,
       default: 0
     }
