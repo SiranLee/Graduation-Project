@@ -14,3 +14,8 @@ INSERT INTO `teacherstore` VALUES (55, 'teachers.xlsx', 'teacherStore/teachers.x
 INSERT INTO `teacherstore` VALUES (56, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
 INSERT INTO `teacherstore` VALUES (57, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
 INSERT INTO `teacherstore` VALUES (58, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
+INSERT INTO `teacherstore` VALUES (59, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
+INSERT INTO `teacherstore` VALUES (60, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
+INSERT INTO `teacherstore` VALUES (61, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
+INSERT INTO `teacherstore` VALUES (62, 'teachers.xlsx', 'teacherStore/teachers.xlsx');
+INSERT INTO `teacherstore` VALUES (63, 'teachers.xlsx', 'teacherStore/teachers.xlsx');

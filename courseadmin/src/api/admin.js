@@ -179,7 +179,7 @@ export function searchTeacherWithNo(data) {
   })
 }
 
-export function getSourceUnderMajor(data){
+export function getSourceUnderMajor(data) {
   return request({
     url: '/get_course_under_major/',
     method: 'get',

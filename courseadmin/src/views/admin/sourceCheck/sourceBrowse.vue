@@ -3,17 +3,17 @@
     <div style="margin-bottom: 30px">
       <source-table
         :is-browse="true"
-        :tableData="tableData"
-        :majorOptions="majorOptions"
-        :courseOptions="courseOptions"
-        :typeOptions="typeOptions"
-        :statusOptions="statusOptions"
-        :majorValue="majorValue"
-        :courseValue="courseValue"
-        :typeValue="typeValue"
-        :currentPage="currentPage"
-        :pageSize="pageSize"
-        :sourceTotal="sourceTotal"
+        :table-data="tableData"
+        :major-options="majorOptions"
+        :course-options="courseOptions"
+        :type-options="typeOptions"
+        :status-options="statusOptions"
+        :major-value="majorValue"
+        :course-value="courseValue"
+        :type-value="typeValue"
+        :current-page="currentPage"
+        :page-size="pageSize"
+        :source-total="sourceTotal"
         @majorValueChange="majorChange"
         @courseValueChange="courseChange"
         @pageSizeChange="pageSizeChanged"
@@ -22,8 +22,8 @@
     </div>
     <div class="chartView">
       <el-row :gutter="30">
-        <el-col :span="9"><div id="pie"></div></el-col>
-        <el-col :span="15"><div id="calender"></div></el-col>
+        <el-col :span="9"><div id="pie" /></el-col>
+        <el-col :span="15"><div id="calender" /></el-col>
       </el-row>
     </div>
   </div>
@@ -45,7 +45,7 @@ export default {
   components: {
     sourceTable
   },
-  data(){
+  data() {
     return {
       tableData: null,
       majorOptions: [],
@@ -59,28 +59,28 @@ export default {
       pageSize: 10,
       sourceTotal: 0,
       pieData: [],
-      heatChartData: [],
+      heatChartData: []
     }
   },
-  async mounted(){
-    let $this = this
+  async mounted() {
+    const $this = this
     // 请求资源类型
     const data_types = await this.$store.dispatch('teachers/getTypes')
     this.typeOptions = data_types.data.types
-    this.typeOptions.forEach(item => $this.pieData.push({name: item.label, value: 0}))
+    this.typeOptions.forEach(item => $this.pieData.push({ name: item.label, value: 0 }))
     // 请求专业
     const data_majors = await this.$store.dispatch('publicOpen/getAllMajors')
     data_majors.data.majors.forEach(item => {
-      let dic = {label: item.title, value: item.major_id}
+      const dic = { label: item.title, value: item.major_id }
       $this.majorOptions.push(dic)
     })
     // const data_courses = await this.$store.dispatch('publicOpen/get_courseinfo',{major_id: })
+
     
-    this.drawCalenderHeat()
   },
-  methods:{
+  methods: {
     // 请求数据 当专业，课程改变后重新画饼图
-    drawPie(){
+    drawPie() {
       const option = {
         title: {
           text: '各类型资源占比',
@@ -129,7 +129,7 @@ export default {
       pieChart.setOption(option)
     },
     // 当课程确定后，画日历热力图
-    drawCalenderHeat(){
+    drawCalenderHeat() {
       const option = {
         title: {
           top: 50,
@@ -138,9 +138,9 @@ export default {
         },
         tooltip: {
           position: 'top',
-          formatter: function (p) {
-            var format = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);
-            return format + ': ' + p.data[1] + '次';
+          formatter: function(p) {
+            var format = echarts.format.formatTime('yyyy-MM-dd', p.data[0])
+            return format + ': ' + p.data[1] + '次'
           }
         },
         visualMap: {
@@ -152,38 +152,38 @@ export default {
           bottom: 50,
           inRange: {
             color: ['#C7DBFF', '#1989fc']
-          },
+          }
         },
         calendar: {
-            top: 130,
-            left: 40,
-            right: 30,
-            height: 140,
-            cellSize: ['auto', 14],
-            range: '2017',
-            itemStyle: {
-              borderWidth: 0.5,
-            },
-            yearLabel: {show: false},
-            splitLine:{
-              show: true, 
-              lineStyle:{
-                width: 0.5,
-                color: '#888'
-              }
+          top: 130,
+          left: 40,
+          right: 30,
+          height: 140,
+          cellSize: ['auto', 14],
+          range: '2021',
+          itemStyle: {
+            borderWidth: 0.5
+          },
+          yearLabel: { show: false },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              width: 0.5,
+              color: '#888'
             }
+          }
         },
         series: {
           type: 'heatmap',
           coordinateSystem: 'calendar',
-          data:  [['2017-01-01', 5], ['2017-01-02', 20], ['2017-01-03', 10]]
+          data: this.heatChartData
         }
       }
       const heatMapChart = echarts.init(document.getElementById('calender'))
       heatMapChart.setOption(option)
     },
     // 专业改变
-    async majorChange(newMajor){
+    async majorChange(newMajor) {
       // 清理上一次的记录
       this.pieData.forEach(item => item.value = 0)
       this.courseOptions.splice(0, this.courseOptions.length)
@@ -192,42 +192,52 @@ export default {
       this.majorValue = newMajor
       const $this = this
       // 请求该专业下上传的资源
-      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', {major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize})
+      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
       this.tableData = data_sources.data.sources
       this.sourceTotal = data_sources.data.total
+      this.processHeat(data_sources.data.heat)
       // 配置饼图的数据
       this.tableData.forEach(item => {
-        for(let i = 0; i<$this.pieData.length; i++){
-          if(item.source_type === $this.pieData[i].name){
+        for (let i = 0; i < $this.pieData.length; i++) {
+          if (item.source_type === $this.pieData[i].name) {
             $this.pieData[i].value++
           }
         }
       })
-      const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', {major_id: this.majorValue})
+      const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', { major_id: this.majorValue })
       data_courses.data.courses.forEach(item => {
-        let dic = {label: item.title, value: item.course_id}
+        const dic = { label: item.title, value: item.course_id }
         $this.courseOptions.push(dic)
       })
       this.drawPie()
+      console.log(this.heatChartData)
+      this.drawCalenderHeat()
     },
     // 课程改变
-    async courseChange(newCourse){
+    async courseChange(newCourse) {
       this.courseValue = newCourse
       // 请求该课程下上传的资源
     },
     // 页大小改变
-    async pageSizeChanged(newSize){
+    async pageSizeChanged(newSize) {
       const $this = this
       this.pageSize = newSize
       // 重新请求数据
     },
     // 页码改变
-    async currentPageChanged(newPage){
+    async currentPageChanged(newPage) {
       const $this = this
       this.currentPage = newPage
       // 重新请求数据
+      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
+      this.tableData = data_sources.data.sources
+    },
+    processHeat(heatData){
+      const $this = this
+      heatData.forEach(item => {
+        $this.heatChartData.push([item.time, item.heat])        
+      })
     }
-
   }
 }
 </script>

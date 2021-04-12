@@ -98,7 +98,7 @@ export function getAllMajors() {
   })
 }
 
-export function getCourseInfo(data){
+export function getCourseInfo(data) {
   return request({
     url: '/get_courseinfo/',
     method: 'get',

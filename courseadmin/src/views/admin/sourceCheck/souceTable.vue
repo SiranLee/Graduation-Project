@@ -103,14 +103,14 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <el-dialog
       v-if="isCheck"
       title="打回原因"
       :visible.sync="dialogVisible"
       width="50%"
     >
-      <el-input v-model="reasonForFail" placeholder="请填写打回原因"></el-input>
+      <el-input v-model="reasonForFail" placeholder="请填写打回原因" />
       <span slot="footer" class="dialog-footer">
         <el-button type="success" @click="submitReason">提 交</el-button>
       </span>
@@ -184,15 +184,15 @@ export default {
     sourceTotal: {
       type: Number,
       default: 0
-    },
+    }
   },
   data() {
     return {
       sourceDesDialogVisible: false,
       dialogVisible: false,
-      reasonForFail: "",
-      sourceDes: "",
-      currentSourceId: "",
+      reasonForFail: '',
+      sourceDes: '',
+      currentSourceId: ''
     }
   },
   mounted() {
@@ -200,10 +200,10 @@ export default {
   },
   methods: {
     majorValueChange(newMajor) {
-      this.$emit('majorValueChange',newMajor)
+      this.$emit('majorValueChange', newMajor)
     },
     courseValueChange(newCourse) {
-      this.$emit('courseValueChange',newCourse)
+      this.$emit('courseValueChange', newCourse)
     },
     typeValueChange(newType) {
 
@@ -220,7 +220,7 @@ export default {
     openOrDownload(url) {
 
     },
-    failPass(sourceId){
+    failPass(sourceId) {
       this.dialogVisible = false
       this.currentSourceId = sourceId
     },
@@ -231,7 +231,7 @@ export default {
       // 资源通过
       this.currentSourceId = sourceId
     },
-    browseSourceDes(row){
+    browseSourceDes(row) {
       this.sourceDesDialogVisible = true
       this.sourceDes = row.source_des
     }

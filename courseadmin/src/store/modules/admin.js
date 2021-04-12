@@ -186,9 +186,9 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async getSourceUnderMajor({commit}, data){
+  async getSourceUnderMajor({ commit }, data) {
     const result = await getSourceUnderMajor(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

@@ -15,3 +15,4 @@ INSERT INTO `adminimage` VALUES (14, 'theMan.jpg', 'adminImage/theMan.jpg');
 INSERT INTO `adminimage` VALUES (15, 'theMan.jpg', 'adminImage/theMan.jpg');
 INSERT INTO `adminimage` VALUES (16, 'java.jpg', 'adminImage/java.jpg');
 INSERT INTO `adminimage` VALUES (17, 'icon.jpg', 'adminImage/icon.jpg');
+INSERT INTO `adminimage` VALUES (18, 'web.jpg', 'adminImage/web.jpg');

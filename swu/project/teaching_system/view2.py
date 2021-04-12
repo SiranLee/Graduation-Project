@@ -854,6 +854,7 @@ def modify_read_limit(request):
         }
     }))
 
+from django.db.models import Count
 # 根据专业id来查已上传已审核的资源
 def get_course_under_major(request):
     major_id = request.GET.get('major_id')
@@ -864,11 +865,13 @@ def get_course_under_major(request):
     sources = File.fileManager.filter(dno=dep)
     totalCount = len(sources)
     result = []
+    heatMap = []
 
     start_index = (current_page-1) * page_size + 1
+    
     # 从start_index开始获取，当不足一页的量的时获取到最后一个，当超出一页的量时获取一页的量
     if start_index - 1 + page_size >= totalCount:
-        for source in sources:
+        for source in sources[start_index-1:totalCount]:
             # 此时不足一页或者刚好一页
             dic = {
             'up_date': str(source.time).split()[0],
@@ -882,7 +885,7 @@ def get_course_under_major(request):
             result.append(dic)
     else:
         #此时超出一页,只获取一页的数据
-        for source in sources[start_index:start_index+page_size]:
+        for source in sources[start_index-1:start_index+page_size-1]:
             dic = {
             'up_date': str(source.time).split()[0],
             'source_type': source.sno.sname,
@@ -893,13 +896,20 @@ def get_course_under_major(request):
             'source_download_time': source.download_times,
             }
             result.append(dic)
+    heats = sources.extra(select={"time": "DATE_FORMAT(time,'%%Y-%%m-%%d')"}).values('time').annotate(Count('time'))
+    for heat in heats:
+        dic = {
+            'time':heat['time'],
+            'heat':heat['time__count']
+        }
+        heatMap.append(dic)
 
-        
     return HttpResponse(json.dumps({
         'code': 20000,
         'data': {
             'sources': result,
-            'total': totalCount
+            'total': totalCount,
+            'heat': heatMap
         }
     }))
 

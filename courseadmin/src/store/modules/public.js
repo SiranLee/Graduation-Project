@@ -98,9 +98,9 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async getCourseInfo({ commit }, data){
+  async getCourseInfo({ commit }, data) {
     const result = await getCourseInfo(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
