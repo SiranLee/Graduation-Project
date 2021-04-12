@@ -1,7 +1,7 @@
 ﻿<template>
   <div>
     <div class="top_choose_bar">
-      <el-select v-model="majorValue" placeholder="请选择专业" @change="majorValueChange">
+      <el-select :value="majorValue" placeholder="请选择专业" @change="majorValueChange">
         <el-option
           v-for="item in majorOptions"
           :key="item.value"
@@ -9,7 +9,7 @@
           :value="item.value"
         />
       </el-select>
-      <el-select v-model="courseValue" placeholder="请选择课程" @change="courseValueChange">
+      <el-select :value="courseValue" placeholder="请选择课程" @change="courseValueChange">
         <el-option
           v-for="item in courseOptions"
           :key="item.value"
@@ -17,7 +17,7 @@
           :value="item.value"
         />
       </el-select>
-      <el-select v-model="typeValue" placeholder="请选择资源类型" @change="typeValueChange">
+      <el-select :value="typeValue" placeholder="请选择资源类型" @change="typeValueChange">
         <el-option
           v-for="item in typeOptions"
           :key="item.value"
@@ -27,7 +27,7 @@
       </el-select>
       <el-select
         v-if="isCheck"
-        v-model="statusValue"
+        :value="statusValue"
         placeholder="请选择资源状态"
         @change="statusValueChange"
       >
@@ -54,19 +54,24 @@
       />
       <el-table-column align="center" prop="source_title" label="资源标题" />
       <el-table-column align="center" prop="source_name" label="资源名称" />
+      <el-table-column align="center" prop="source_course" label="资源所在课程" />
       <el-table-column
         v-if="isCheck"
         align="center"
         prop="source_status"
         label="资源状态"
       />
-      <el-table-column align="center" prop="source_des" label="资源说明" />
       <el-table-column
         v-if="isBrowse"
         prop="source_download_time"
         label="资源下载次数"
         align="center"
       />
+      <el-table-column align="center" label="资源说明">
+        <template slot-scope="scope">
+          <el-button type="primary" size="small" @click="browseSourceDes(scope.row)">查看</el-button>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="isCheck"
         align="center"
@@ -91,7 +96,7 @@
       <el-pagination
         :current-page="currentPage"
         :page-sizes="[10, 20, 30, 40]"
-        :page-size="10"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="sourceTotal"
         @size-change="handleSizeChange"
@@ -109,6 +114,14 @@
         <el-button type="success" @click="submitReason">提 交</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      title="资源说明"
+      :visible.sync="sourceDesDialogVisible"
+      width="40%"
+    >
+      <div v-html="sourceDes" />
+    </el-dialog>
+
   </div>
 </template>
 <script>
@@ -163,15 +176,21 @@ export default {
       type: Number,
       default: 1
     },
+    pageSize: {
+      type: Number,
+      default: 10
+    },
     sourceTotal: {
       type: Number,
       default: 0
-    }
+    },
   },
   data() {
     return {
+      sourceDesDialogVisible: false,
       dialogVisible: false,
       reasonForFail: "",
+      sourceDes: "",
       currentSourceId: "",
     }
   },
@@ -180,10 +199,10 @@ export default {
   },
   methods: {
     majorValueChange(newMajor) {
-
+      this.$emit('majorValueChange',newMajor)
     },
     courseValueChange(newCourse) {
-
+      this.$emit('courseValueChange',newCourse)
     },
     typeValueChange(newType) {
 
@@ -192,10 +211,10 @@ export default {
 
     },
     handleSizeChange(newSize) {
-
+      this.$emit('pageSizeChange', newSize)
     },
     handleCurrentChange(newPage) {
-
+      this.$emit('currentPageChange', newPage)
     },
     openOrDownload(url) {
 
@@ -210,6 +229,10 @@ export default {
     sourcePass(sourceId) {
       // 资源通过
       this.currentSourceId = sourceId
+    },
+    browseSourceDes(row){
+      this.sourceDesDialogVisible = true
+      this.sourceDes = row.source_des
     }
   }
 }

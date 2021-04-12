@@ -10,7 +10,8 @@
   compareOriginPwd,
   modifyPwdSelf,
   searchByKeyWord,
-  getAllMajors } from '@/api/public'
+  getAllMajors,
+  getCourseInfo } from '@/api/public'
 
 const actions = {
   async getAllCourse({ commit }, data) {
@@ -93,6 +94,13 @@ const actions = {
   async searchByKeyWord({ commit }, data) {
     const result = await searchByKeyWord(data)
     if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getCourseInfo({ commit }, data){
+    const result = await getCourseInfo(data)
+    if(result){
       return result
     }
     return Promise.reject(result)

@@ -853,3 +853,32 @@ def modify_read_limit(request):
             "message": 'ok'
         }
     }))
+
+# 根据专业id来查已上传已审核的资源
+def get_course_under_major(request):
+    major_id = request.GET.get('major_id')
+    # 先找到该专业下的所有课程
+    courses = Course.courseManager.filter(dno=major_id)
+    result = []
+    for course in courses:
+        sources = File.fileManager.filter(no=course)
+        for source in sources:
+            dic = {
+              'up_date': str(source.time).split()[0],
+              'source_type': source.sno.sname,
+              'source_title': source.title,
+              'source_name': source.filename,
+              'source_course': source.no.name,
+              'source_des': source.describe,
+              'source_download_time': source.download_times,
+            }
+            result.append(dic)
+        
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'sources': result,
+            'total': len(result)
+        }
+    }))
+

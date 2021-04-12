@@ -97,3 +97,11 @@ export function getAllMajors() {
     method: 'get'
   })
 }
+
+export function getCourseInfo(data){
+  return request({
+    url: '/get_courseinfo/',
+    method: 'get',
+    params: data
+  })
+}

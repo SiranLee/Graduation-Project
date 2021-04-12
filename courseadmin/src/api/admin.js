@@ -178,3 +178,11 @@ export function searchTeacherWithNo(data) {
     params: data
   })
 }
+
+export function getSourceUnderMajor(data){
+  return request({
+    url: '/get_course_under_major/',
+    method: 'get',
+    params: data
+  })
+}

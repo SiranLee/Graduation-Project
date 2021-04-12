@@ -21,7 +21,8 @@
   addDiscipline,
   addRouteForDiscipline,
   delDiscipline,
-  searchTeacherWithNo } from '@/api/admin'
+  searchTeacherWithNo,
+  getSourceUnderMajor } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -181,6 +182,13 @@ const actions = {
   async searchTeacherWithNo({ commit }, data) {
     const result = await searchTeacherWithNo(data)
     if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getSourceUnderMajor({commit}, data){
+    const result = await getSourceUnderMajor(data)
+    if(result){
       return result
     }
     return Promise.reject(result)

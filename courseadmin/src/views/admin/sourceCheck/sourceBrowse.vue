@@ -12,7 +12,12 @@
         :courseValue="courseValue"
         :typeValue="typeValue"
         :currentPage="currentPage"
+        :pageSize="pageSize"
         :sourceTotal="sourceTotal"
+        @majorValueChange="majorChange"
+        @courseValueChange="courseChange"
+        @pageSizeChange="pageSizeChanged"
+        @currentPageChange="currentPageChanged"
       />
     </div>
     <div class="chartView">
@@ -42,7 +47,7 @@ export default {
   },
   data(){
     return {
-      tableData: [],
+      tableData: null,
       majorOptions: [],
       courseOptions: [],
       typeOptions: [],
@@ -51,12 +56,26 @@ export default {
       courseValue: '',
       typeValue: '',
       currentPage: 1,
-      sourceTotal: 0
+      pageSize: 10,
+      sourceTotal: 0,
+      pieData: [],
+      heatChartData: [],
     }
   },
-  mounted(){
+  async mounted(){
+    let $this = this
+    // 请求资源类型
+    const data_types = await this.$store.dispatch('teachers/getTypes')
+    this.typeOptions = data_types.data.types
+    this.typeOptions.forEach(item => $this.pieData.push({name: item.label, value: 0}))
+    // 请求专业
+    const data_majors = await this.$store.dispatch('publicOpen/getAllMajors')
+    data_majors.data.majors.forEach(item => {
+      let dic = {label: item.title, value: item.major_id}
+      $this.majorOptions.push(dic)
+    })
+    // const data_courses = await this.$store.dispatch('publicOpen/get_courseinfo',{major_id: })
     
-    this.drawPie()
     this.drawCalenderHeat()
   },
   methods:{
@@ -95,7 +114,7 @@ export default {
               borderColor: '#fff',
               borderWidth: 1
             },
-            data: [{name:'图片', value:20}, {name:'视频', value: 10}, {name:'文件',value:'25'}],
+            data: this.pieData,
             emphasis: {
               itemStyle: {
                 shadowBlur: 10,
@@ -121,12 +140,12 @@ export default {
           position: 'top',
           formatter: function (p) {
             var format = echarts.format.formatTime('yyyy-MM-dd', p.data[0]);
-            return format + ': ' + p.data[1];
+            return format + ': ' + p.data[1] + '次';
           }
         },
         visualMap: {
           min: 0,
-          max: 100,
+          max: 40,
           type: 'piecewise',
           orient: 'horizontal',
           left: 'center',
@@ -157,12 +176,58 @@ export default {
         series: {
           type: 'heatmap',
           coordinateSystem: 'calendar',
-          data:  [['2017-01-01', 90], ['2017-01-02', 87], ['2017-01-03', 69]]
+          data:  [['2017-01-01', 5], ['2017-01-02', 20], ['2017-01-03', 10]]
         }
       }
       const heatMapChart = echarts.init(document.getElementById('calender'))
       heatMapChart.setOption(option)
+    },
+    // 专业改变
+    async majorChange(newMajor){
+      // 清理上一次的记录
+      this.pieData.forEach(item => item.value = 0)
+      this.courseOptions.splice(0, this.courseOptions.length)
+      this.courseValue = ''
+      // 赋予新值
+      this.majorValue = newMajor
+      const $this = this
+      // 请求该专业下上传的资源
+      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', {major_id: this.majorValue})
+      this.tableData = data_sources.data.sources
+      this.sourceTotal = data_sources.data.total
+      // 配置饼图的数据
+      this.tableData.forEach(item => {
+        for(let i = 0; i<$this.pieData.length; i++){
+          if(item.source_type === $this.pieData[i].name){
+            $this.pieData[i].value++
+          }
+        }
+      })
+      const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', {major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize})
+      data_courses.data.courses.forEach(item => {
+        let dic = {label: item.title, value: item.course_id}
+        $this.courseOptions.push(dic)
+      })
+      this.drawPie()
+    },
+    // 课程改变
+    async courseChange(newCourse){
+      this.courseValue = newCourse
+      // 请求该课程下上传的资源
+    },
+    // 页大小改变
+    async pageSizeChanged(newSize){
+      const $this = this
+      this.pageSize = newSize
+      // 重新请求数据
+    },
+    // 页码改变
+    async currentPageChanged(newPage){
+      const $this = this
+      this.currentPage = newPage
+      // 重新请求数据
     }
+
   }
 }
 </script>
