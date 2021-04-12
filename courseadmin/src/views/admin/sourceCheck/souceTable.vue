@@ -39,6 +39,17 @@
         />
       </el-select>
     </div>
+    <div class="paginationContainer">
+      <el-pagination
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 40]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="sourceTotal"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
     <el-table :data="tableData" border style="width: 100%">
       <el-table-column
         prop="up_date"
@@ -92,17 +103,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <div class="paginationContainer">
-      <el-pagination
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 40]"
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="sourceTotal"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    
     <el-dialog
       v-if="isCheck"
       title="打回原因"
@@ -242,6 +243,6 @@ export default {
   margin-bottom: 40px;
 }
 .paginationContainer{
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 </style>

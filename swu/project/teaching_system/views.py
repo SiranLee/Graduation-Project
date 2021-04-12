@@ -349,6 +349,7 @@ def up_source(request):
     course_id = request.POST.get('course_id')
     # print(course_id)
     course = Course.courseManager.filter(no=course_id)[0]
+    department = course.dno
     # print(course)
     teacher = course.tno
     # print(teacher)
@@ -367,7 +368,7 @@ def up_source(request):
             for info in file1.chunks():
                 fp.write(info)
         # print(os.path.join('/upfile/source', file1.name))
-        f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, not_available_2_all, teacher, source, course)
+        f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, 0, department.dno, not_available_2_all, teacher, source, course)
         f.save()
         fileList.append(f)
 

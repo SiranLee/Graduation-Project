@@ -192,7 +192,7 @@ export default {
       this.majorValue = newMajor
       const $this = this
       // 请求该专业下上传的资源
-      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', {major_id: this.majorValue})
+      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', {major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize})
       this.tableData = data_sources.data.sources
       this.sourceTotal = data_sources.data.total
       // 配置饼图的数据
@@ -203,7 +203,7 @@ export default {
           }
         }
       })
-      const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', {major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize})
+      const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', {major_id: this.majorValue})
       data_courses.data.courses.forEach(item => {
         let dic = {label: item.title, value: item.course_id}
         $this.courseOptions.push(dic)

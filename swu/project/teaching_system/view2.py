@@ -857,28 +857,49 @@ def modify_read_limit(request):
 # 根据专业id来查已上传已审核的资源
 def get_course_under_major(request):
     major_id = request.GET.get('major_id')
-    # 先找到该专业下的所有课程
-    courses = Course.courseManager.filter(dno=major_id)
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+    
+    dep = Department.departmentManage.get(pk=major_id).dno
+    sources = File.fileManager.filter(dno=dep)
+    totalCount = len(sources)
     result = []
-    for course in courses:
-        sources = File.fileManager.filter(no=course)
+
+    start_index = (current_page-1) * page_size + 1
+    # 从start_index开始获取，当不足一页的量的时获取到最后一个，当超出一页的量时获取一页的量
+    if start_index - 1 + page_size >= totalCount:
         for source in sources:
+            # 此时不足一页或者刚好一页
             dic = {
-              'up_date': str(source.time).split()[0],
-              'source_type': source.sno.sname,
-              'source_title': source.title,
-              'source_name': source.filename,
-              'source_course': source.no.name,
-              'source_des': source.describe,
-              'source_download_time': source.download_times,
+            'up_date': str(source.time).split()[0],
+            'source_type': source.sno.sname,
+            'source_title': source.title,
+            'source_name': source.filename,
+            'source_course': source.no.name,
+            'source_des': source.describe,
+            'source_download_time': source.download_times,
             }
             result.append(dic)
+    else:
+        #此时超出一页,只获取一页的数据
+        for source in sources[start_index:start_index+page_size]:
+            dic = {
+            'up_date': str(source.time).split()[0],
+            'source_type': source.sno.sname,
+            'source_title': source.title,
+            'source_name': source.filename,
+            'source_course': source.no.name,
+            'source_des': source.describe,
+            'source_download_time': source.download_times,
+            }
+            result.append(dic)
+
         
     return HttpResponse(json.dumps({
         'code': 20000,
         'data': {
             'sources': result,
-            'total': len(result)
+            'total': totalCount
         }
     }))
 
