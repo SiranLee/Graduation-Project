@@ -186,3 +186,19 @@ export function getSourceUnderMajor(data) {
     params: data
   })
 }
+
+export function getSourceUnderCourse(data){
+  return request({
+    url: '/get_source_under_course/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function sourceStatusChange(data){
+  return request({
+    url: '/source_status_change/',
+    method:'get',
+    params: data
+  })
+}

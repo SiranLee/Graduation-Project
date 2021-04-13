@@ -855,6 +855,29 @@ def modify_read_limit(request):
     }))
 
 from django.db.models import Count
+def create_source_dic(source):
+    dic = {
+        'up_date': str(source.time).split()[0],
+        'source_type': source.sno.sname,
+        'source_title': source.title,
+        'source_name': source.filename,
+        'source_course': source.no.name,
+        'source_des': source.describe,
+        'source_download_time': source.download_times,
+    }
+    return dic
+
+def split_page(sources, current_page, page_size, start_index, totalCount, result):
+    if start_index - 1 + page_size >= totalCount:
+        for source in sources[start_index-1:totalCount]:
+            # 此时不足一页或者刚好一页
+            result.append(create_source_dic(source))
+    else:
+        #此时超出一页,只获取一页的数据
+        for source in sources[start_index-1:start_index+page_size-1]:
+            result.append(create_source_dic(source))
+    
+
 # 根据专业id来查已上传已审核的资源
 def get_course_under_major(request):
     major_id = request.GET.get('major_id')
@@ -870,32 +893,8 @@ def get_course_under_major(request):
     start_index = (current_page-1) * page_size + 1
     
     # 从start_index开始获取，当不足一页的量的时获取到最后一个，当超出一页的量时获取一页的量
-    if start_index - 1 + page_size >= totalCount:
-        for source in sources[start_index-1:totalCount]:
-            # 此时不足一页或者刚好一页
-            dic = {
-            'up_date': str(source.time).split()[0],
-            'source_type': source.sno.sname,
-            'source_title': source.title,
-            'source_name': source.filename,
-            'source_course': source.no.name,
-            'source_des': source.describe,
-            'source_download_time': source.download_times,
-            }
-            result.append(dic)
-    else:
-        #此时超出一页,只获取一页的数据
-        for source in sources[start_index-1:start_index+page_size-1]:
-            dic = {
-            'up_date': str(source.time).split()[0],
-            'source_type': source.sno.sname,
-            'source_title': source.title,
-            'source_name': source.filename,
-            'source_course': source.no.name,
-            'source_des': source.describe,
-            'source_download_time': source.download_times,
-            }
-            result.append(dic)
+    split_page(sources, current_page, page_size, start_index, totalCount, result)
+
     heats = sources.extra(select={"time": "DATE_FORMAT(time,'%%Y-%%m-%%d')"}).values('time').annotate(Count('time'))
     for heat in heats:
         dic = {
@@ -912,4 +911,66 @@ def get_course_under_major(request):
             'heat': heatMap
         }
     }))
+# 根据课程id来过滤资源
+def get_source_under_course(request):
+    course_id = request.GET.get('course_id')
+    current_page = int(request.GET.get('currentPage'))
+    page_size = int(request.GET.get('pageSize'))
 
+    sources = File.fileManager.filter(no=course_id)
+    totalCount = len(sources)
+    result = []
+    heatMap = []
+    start_index = start_index = (current_page-1) * page_size + 1
+
+    split_page(sources, current_page, page_size, start_index, totalCount, result)
+    heats = sources.extra(select={"time": "DATE_FORMAT(time,'%%Y-%%m-%%d')"}).values('time').annotate(Count('time'))
+    for heat in heats:
+        dic = {
+            'time':heat['time'],
+            'heat':heat['time__count']
+        }
+        heatMap.append(dic)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount,
+            'heat': heatMap
+        }
+    }))
+
+# 根据资源类型来过滤资源
+def source_status_change(request):
+    major_id = request.GET.get('major_id')
+    course_id = request.GET.get('course_id')
+    source_type = request.GET.get('type')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    sources = None
+    source_no = Source.sourceManager.get(sno=source_type)
+    result = []
+
+    # 首先判断是已知课程过滤资源还是未知课程过滤资源
+    if course_id == '-1':
+        # 未知课程过滤资源
+        dep = Department.departmentManage.get(pk=major_id).dno
+        sources = File.fileManager.filter(dno=dep, sno=source_no)
+    else:
+        # 已知课程过滤资源
+        source_no = Source.sourceManager.get(sno=source_type)
+        sources = File.fileManager.filter(no=course_id, sno=source_no)
+    
+    totalCount = len(sources)
+    start_index = start_index = (current_page-1) * page_size + 1
+    split_page(sources, current_page, page_size, start_index, totalCount, result)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount
+        }
+    }))

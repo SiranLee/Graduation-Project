@@ -22,7 +22,9 @@
   addRouteForDiscipline,
   delDiscipline,
   searchTeacherWithNo,
-  getSourceUnderMajor } from '@/api/admin'
+  getSourceUnderMajor,
+  getSourceUnderCourse,
+  sourceStatusChange } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -192,6 +194,20 @@ const actions = {
       return result
     }
     return Promise.reject(result)
+  },
+  async getSourceUnderCourse({ commit }, data){
+    const result = await getSourceUnderCourse(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async sourceStatusChange({commit}, data){
+    const result = await sourceStatusChange(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(reuslt)
   }
 }
 

@@ -206,7 +206,7 @@ export default {
       this.$emit('courseValueChange', newCourse)
     },
     typeValueChange(newType) {
-
+      this.$emit('typeValueChange', newType)
     },
     statusValueChange(newStatus) {
 

@@ -719,7 +719,7 @@ def get_courseinfo(request):
     for item in courses:
         dic = {
             'title': item.name,
-            'course_id': item.no
+            'course_id': str(item.pk)
         }
         list.append(dic)
     return HttpResponse(json.dumps({

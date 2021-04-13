@@ -18,6 +18,7 @@
         @courseValueChange="courseChange"
         @pageSizeChange="pageSizeChanged"
         @currentPageChange="currentPageChanged"
+        @typeValueChange="typeValueChanged"
       />
     </div>
     <div class="chartView">
@@ -64,10 +65,6 @@ export default {
   },
   async mounted() {
     const $this = this
-    // 请求资源类型
-    const data_types = await this.$store.dispatch('teachers/getTypes')
-    this.typeOptions = data_types.data.types
-    this.typeOptions.forEach(item => $this.pieData.push({ name: item.label, value: 0 }))
     // 请求专业
     const data_majors = await this.$store.dispatch('publicOpen/getAllMajors')
     data_majors.data.majors.forEach(item => {
@@ -184,45 +181,58 @@ export default {
     },
     // 专业改变
     async majorChange(newMajor) {
+      const $this = this
+      // 请求资源类型
+      const data_types = await this.$store.dispatch('teachers/getTypes')
+      this.typeOptions = data_types.data.types
+      this.typeOptions.forEach(item => $this.pieData.push({ name: item.label, value: 0 }))
       // 清理上一次的记录
       this.pieData.forEach(item => item.value = 0)
+      this.heatChartData.splice(0, this.heatChartData.length)
       this.courseOptions.splice(0, this.courseOptions.length)
       this.courseValue = ''
       // 赋予新值
       this.majorValue = newMajor
-      const $this = this
+      this.currentPage = 1
       // 请求该专业下上传的资源
       const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
-      this.tableData = data_sources.data.sources
-      this.sourceTotal = data_sources.data.total
-      this.processHeat(data_sources.data.heat)
-      // 配置饼图的数据
-      this.tableData.forEach(item => {
-        for (let i = 0; i < $this.pieData.length; i++) {
-          if (item.source_type === $this.pieData[i].name) {
-            $this.pieData[i].value++
-          }
-        }
-      })
+      this.wirteTableAndChart(data_sources)
+      // 请求课程数据
       const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', { major_id: this.majorValue })
       data_courses.data.courses.forEach(item => {
         const dic = { label: item.title, value: item.course_id }
         $this.courseOptions.push(dic)
       })
-      this.drawPie()
-      console.log(this.heatChartData)
-      this.drawCalenderHeat()
+      
     },
     // 课程改变
     async courseChange(newCourse) {
+      // 清理历史
+      this.pieData.forEach(item => item.value = 0)
+      this.heatChartData.splice(0, this.heatChartData.length)
+      // 赋新值
       this.courseValue = newCourse
+      this.currentPage = 1
       // 请求该课程下上传的资源
+      const data = await this.$store.dispatch('admin/getSourceUnderCourse', {course_id: this.courseValue, currentPage: this.currentPage, pageSize: this.pageSize})
+      this.wirteTableAndChart(data)
     },
-    // 页大小改变
+    // 资源状态改变
+    async typeValueChanged(newType){
+      this.typeValue = newType
+      const $this = this
+      let current_course = -1
+      if(this.courseValue.length != 0){
+        current_course = this.courseValue
+      }
+      const data = await this.$store.dispatch('admin/sourceStatusChange', {major_id: this.majorValue, course_id: current_course, type: this.typeValue, page_size: this.pageSize, current_page: this.currentPage})
+      console.log(data)
+    },
+    // TODO: 页大小改变
     async pageSizeChanged(newSize) {
       const $this = this
       this.pageSize = newSize
-      // 重新请求数据
+      
     },
     // 页码改变
     async currentPageChanged(newPage) {
@@ -232,8 +242,26 @@ export default {
       const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
       this.tableData = data_sources.data.sources
     },
-    processHeat(heatData){
+    // 将请求下来的资源写到页面上
+    wirteTableAndChart(data_sources){
+      this.tableData = data_sources.data.sources
+      this.sourceTotal = data_sources.data.total
+      // 配置图表数据
+      this.processChartData(data_sources.data.heat)
+      this.drawPie()
+      this.drawCalenderHeat()
+    },
+    // 配置图表数据
+    processChartData(heatData){
       const $this = this
+      this.tableData.forEach(item => {
+        for (let i = 0; i < $this.pieData.length; i++) {
+          if (item.source_type === $this.pieData[i].name) {
+            $this.pieData[i].value++
+          }
+        }
+      })
+
       heatData.forEach(item => {
         $this.heatChartData.push([item.time, item.heat])        
       })
