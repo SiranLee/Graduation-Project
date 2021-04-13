@@ -195,9 +195,9 @@ export function getSourceUnderCourse(data){
   })
 }
 
-export function sourceStatusChange(data){
+export function sourceTypeChange(data){
   return request({
-    url: '/source_status_change/',
+    url: '/source_type_change/',
     method:'get',
     params: data
   })

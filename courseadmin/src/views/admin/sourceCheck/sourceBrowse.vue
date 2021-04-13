@@ -19,6 +19,7 @@
         @pageSizeChange="pageSizeChanged"
         @currentPageChange="currentPageChanged"
         @typeValueChange="typeValueChanged"
+        @clearSelectParams="clearSelectedParams"
       />
     </div>
     <div class="chartView">
@@ -183,20 +184,25 @@ export default {
     async majorChange(newMajor) {
       const $this = this
       // 请求资源类型
-      const data_types = await this.$store.dispatch('teachers/getTypes')
-      this.typeOptions = data_types.data.types
-      this.typeOptions.forEach(item => $this.pieData.push({ name: item.label, value: 0 }))
+      if(this.typeOptions.length == 0){
+        const data_types = await this.$store.dispatch('teachers/getTypes')
+        this.pieData.splice(0, this.pieData.length)
+        this.typeOptions = data_types.data.types
+        this.typeOptions.forEach(item => $this.pieData.push({ name: item.label, value: 0 }))
+      }
       // 清理上一次的记录
       this.pieData.forEach(item => item.value = 0)
       this.heatChartData.splice(0, this.heatChartData.length)
       this.courseOptions.splice(0, this.courseOptions.length)
       this.courseValue = ''
+      let currentType = this.typeValue.length == 0?'-1':this.typeValue
       // 赋予新值
       this.majorValue = newMajor
       this.currentPage = 1
       // 请求该专业下上传的资源
-      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
+      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, currentType: currentType, current_page: this.currentPage, page_size: this.pageSize })
       this.wirteTableAndChart(data_sources)
+      console.log(this.heatChartData)
       // 请求课程数据
       const data_courses = await this.$store.dispatch('publicOpen/getCourseInfo', { major_id: this.majorValue })
       data_courses.data.courses.forEach(item => {
@@ -213,11 +219,12 @@ export default {
       // 赋新值
       this.courseValue = newCourse
       this.currentPage = 1
+      let currentType = this.typeValue.length == 0?'-1':this.typeValue
       // 请求该课程下上传的资源
-      const data = await this.$store.dispatch('admin/getSourceUnderCourse', {course_id: this.courseValue, currentPage: this.currentPage, pageSize: this.pageSize})
+      const data = await this.$store.dispatch('admin/getSourceUnderCourse', {course_id: this.courseValue, currentType: currentType, currentPage: this.currentPage, pageSize: this.pageSize})
       this.wirteTableAndChart(data)
     },
-    // 资源状态改变
+    // 资源类型改变
     async typeValueChanged(newType){
       this.typeValue = newType
       const $this = this
@@ -225,23 +232,40 @@ export default {
       if(this.courseValue.length != 0){
         current_course = this.courseValue
       }
-      const data = await this.$store.dispatch('admin/sourceStatusChange', {major_id: this.majorValue, course_id: current_course, type: this.typeValue, page_size: this.pageSize, current_page: this.currentPage})
-      console.log(data)
+      const data = await this.$store.dispatch('admin/sourceTypeChange', {major_id: this.majorValue, course_id: current_course, type: this.typeValue, page_size: this.pageSize, current_page: this.currentPage})
+      this.tableData = data.data.sources
+      this.sourceTotal = data.data.total
     },
-    // TODO: 页大小改变
-    async pageSizeChanged(newSize) {
+
+    // 页大小改变
+    pageSizeChanged(newSize) {
       const $this = this
       this.pageSize = newSize
-      
+      this.paginationDataChanged()
     },
     // 页码改变
-    async currentPageChanged(newPage) {
+    currentPageChanged(newPage) {
       const $this = this
       this.currentPage = newPage
-      // 重新请求数据
-      const data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, current_page: this.currentPage, page_size: this.pageSize })
+      this.paginationDataChanged()
+    },
+    // 分页组件数据改变的请求
+    async paginationDataChanged(){
+      let currentType = this.typeValue.length == 0?'-1':this.typeValue
+      let data_sources = null
+      // 判断是哪一个选择框对应的change了
+      if(this.majorValue.length>0&&this.courseValue.length==0&&this.typeValue.length==0){
+        // 说明是majorchange了
+        data_sources = await this.$store.dispatch('admin/getSourceUnderMajor', { major_id: this.majorValue, currentType: currentType, current_page: this.currentPage, page_size: this.pageSize })
+      }else if(this.courseValue.length>0&&this.typeValue.length==0){
+        // 说明是coursechange了
+        data_sources = await this.$store.dispatch('admin/getSourceUnderCourse', {course_id: this.courseValue, currentType: currentType, currentPage: this.currentPage, pageSize: this.pageSize})
+      }else if(this.courseValue.length==0&&this.typeValue.length>0){
+        data_sources = await this.$store.dispatch('admin/sourceTypeChange', {major_id: this.majorValue, course_id: current_course, type: currentType, page_size: this.pageSize, current_page: this.currentPage})
+      }
       this.tableData = data_sources.data.sources
     },
+
     // 将请求下来的资源写到页面上
     wirteTableAndChart(data_sources){
       this.tableData = data_sources.data.sources
@@ -265,7 +289,17 @@ export default {
       heatData.forEach(item => {
         $this.heatChartData.push([item.time, item.heat])        
       })
-    }
+    },
+    // 清空所选参数
+    clearSelectedParams(){
+      this.majorValue = ''
+      this.courseValue = ''
+      this.typeValue = ''
+      this.typeOptions.splice(0, this.typeOptions.length)
+      this.tableData.splice(0, this.tableData.length)
+      this.pieData.splice(0, this.pieData.length)
+      this.heatChartData.splice(0, this.heatChartData.length)
+    },
   }
 }
 </script>

@@ -24,7 +24,7 @@
   searchTeacherWithNo,
   getSourceUnderMajor,
   getSourceUnderCourse,
-  sourceStatusChange } from '@/api/admin'
+  sourceTypeChange } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -202,8 +202,8 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async sourceStatusChange({commit}, data){
-    const result = await sourceStatusChange(data)
+  async sourceTypeChange({commit}, data){
+    const result = await sourceTypeChange(data)
     if(result){
       return result
     }

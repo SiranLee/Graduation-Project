@@ -87,7 +87,7 @@ urlpatterns = [
     re_path(r'^modify_read_limit/$', view2.modify_read_limit, name="modify_read_limit"),
     re_path(r'^get_course_under_major/$', view2.get_course_under_major, name="get_course_under_major"),
     re_path(r'^get_source_under_course/$', view2.get_source_under_course, name="get_source_under_course"),
-    re_path(r'^source_status_change/$', view2.source_status_change, name="source_status_change"),
+    re_path(r'^source_type_change/$', view2.source_type_change, name="source_type_change"),
 
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),

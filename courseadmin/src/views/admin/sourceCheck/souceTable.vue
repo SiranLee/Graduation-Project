@@ -38,6 +38,7 @@
           :value="item.value"
         />
       </el-select>
+      <el-button type="warning" @click="clearSelectParams">清空所选参数</el-button>
     </div>
     <div class="paginationContainer">
       <el-pagination
@@ -216,6 +217,9 @@ export default {
     },
     handleCurrentChange(newPage) {
       this.$emit('currentPageChange', newPage)
+    },
+    clearSelectParams(){
+      this.$emit('clearSelectParams')
     },
     openOrDownload(url) {
 

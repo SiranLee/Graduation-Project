@@ -881,11 +881,16 @@ def split_page(sources, current_page, page_size, start_index, totalCount, result
 # 根据专业id来查已上传已审核的资源
 def get_course_under_major(request):
     major_id = request.GET.get('major_id')
+    source_type = request.GET.get('currentType')
     current_page = int(request.GET.get('current_page'))
     page_size = int(request.GET.get('page_size'))
-    
-    dep = Department.departmentManage.get(pk=major_id).dno
-    sources = File.fileManager.filter(dno=dep)
+    dep = Department.departmentManage.get(pk=major_id).dno   
+    if source_type == '-1':
+        sources = File.fileManager.filter(dno=dep)
+    else:
+        source_no = Source.sourceManager.get(sno=source_type)
+        sources = File.fileManager.filter(dno=dep, sno=source_no)
+        
     totalCount = len(sources)
     result = []
     heatMap = []
@@ -914,10 +919,16 @@ def get_course_under_major(request):
 # 根据课程id来过滤资源
 def get_source_under_course(request):
     course_id = request.GET.get('course_id')
+    source_type = request.GET.get('currentType')
     current_page = int(request.GET.get('currentPage'))
     page_size = int(request.GET.get('pageSize'))
+    sources = None
+    if source_type == '-1':
+        sources = File.fileManager.filter(no=course_id)
+    else:
+        source_no = Source.sourceManager.get(sno=source_type)
+        sources = File.fileManager.filter(no=course_id, sno=source_no)
 
-    sources = File.fileManager.filter(no=course_id)
     totalCount = len(sources)
     result = []
     heatMap = []
@@ -942,7 +953,7 @@ def get_source_under_course(request):
     }))
 
 # 根据资源类型来过滤资源
-def source_status_change(request):
+def source_type_change(request):
     major_id = request.GET.get('major_id')
     course_id = request.GET.get('course_id')
     source_type = request.GET.get('type')
