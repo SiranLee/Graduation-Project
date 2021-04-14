@@ -203,14 +203,14 @@ export function sourceTypeChange(data) {
   })
 }
 
-export function getStagingTypes(data){
+export function getStagingTypes(data) {
   return request({
     url: '/get_staging_types/',
     method: 'get'
   })
 }
 
-export function getStagingFileUnderMajor(data){
+export function getStagingFileUnderMajor(data) {
   return request({
     url: '/get_staging_file_under_major/',
     method: 'get',

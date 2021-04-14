@@ -1035,3 +1035,47 @@ def get_staging_file_under_major(request):
             'total': totalCount
         }
     }))
+
+
+def create_staging_sources_dic(source):
+    dic = {
+        'upload_id': source.pk,
+        'upload_date': str(source.up_time).split()[0],
+        'upload_type': source.sno.sname,
+        'upload_title': source.title,
+        'upload_filename': source.filename,
+        'upload_status': source.fileStatus,
+        'upload_intro': source.fileDes,
+        'upload_filelink': source.url,
+        'not_available2all': source.not_available2all
+    }
+    return dic
+
+# 教师按照课程来获取待审核和未通过的资源
+def get_staging_under_course(request):
+    course_id = request.GET.get('course_id')
+    current_page = int(request.GET.get('page'))
+    page_size = int(request.GET.get('limit'))
+
+    sources = StagingFile.stagingFileManager.filter(fileStatus=1 or 3)
+    totalCount = len(sources)
+    start_index = (current_page - 1) * page_size + 1
+    result = []
+
+    if start_index - 1 + page_size >= totalCount:
+        for source in sources[start_index-1:totalCount]:
+            # 此时不足一页或者刚好一页
+            result.append(create_staging_sources_dic(source))
+    else:
+        #此时超出一页,只获取一页的数据
+        for source in sources[start_index-1:start_index+page_size-1]:
+            result.append(create_staging_sources_dic(source))
+    
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount
+        }
+    }))

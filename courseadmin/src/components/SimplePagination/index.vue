@@ -20,7 +20,7 @@ export default {
     pageSize: {
       type: Number,
       default: pageConfig.pageSize
-    },
+    }
   },
   data() {
     return {

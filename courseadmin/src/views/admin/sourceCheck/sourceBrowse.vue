@@ -191,7 +191,7 @@ export default {
       this.heatChartData.splice(0, this.heatChartData.length)
       this.courseOptions.splice(0, this.courseOptions.length)
       this.courseValue = ''
-      let currentType = this.typeValue.length == 0 ? '-1' : this.typeValue
+      const currentType = this.typeValue.length == 0 ? '-1' : this.typeValue
       // 赋予新值
       this.majorValue = newMajor
       this.currentPage = 1

@@ -55,13 +55,11 @@
       <el-table-column
         prop="up_date"
         label="上传日期"
-        width="180"
         align="center"
       />
       <el-table-column
         prop="source_type"
         label="资源类型"
-        width="180"
         align="center"
       />
       <el-table-column align="center" prop="source_title" label="资源标题" />
@@ -79,6 +77,12 @@
         label="资源下载次数"
         align="center"
       />
+      <el-table-column v-if="isCheck" align="center" label="资源可见性">
+        <template slot-scope="scope">
+          <span v-if="scope.row.not_available2all">仅该课程学生可见</span>
+          <span v-if="!scope.row.not_available2all">任何学生可见</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="资源说明">
         <template slot-scope="scope">
           <el-button type="primary" size="small" @click="browseSourceDes(scope.row)">查看</el-button>

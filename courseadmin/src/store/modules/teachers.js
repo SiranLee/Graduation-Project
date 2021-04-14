@@ -28,7 +28,8 @@
   submitSingleScore,
   creatClassAndSetRoutes,
   searchWithNo,
-  modifySourceReadLimit } from '@/api/teacher'
+  modifySourceReadLimit,
+  getStagingSources } from '@/api/teacher'
 
 const actions = {
 // 获取教师教授的课程
@@ -240,6 +241,13 @@ const actions = {
   },
   async modifySourceReadLimit({ commit }, data) {
     const result = await modifySourceReadLimit(data)
+    if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getStagingSources({ commit }, data) {
+    const result = await getStagingSources(data)
     if (result) {
       return result
     }

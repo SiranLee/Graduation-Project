@@ -6,6 +6,7 @@
         <course-detail-bottom
           :types="detailBottom.types"
           :task-types="detailBottom.taskTypes"
+          :staging-list="detailBottom.stagingList"
           :source-list="detailBottom.sourceList"
           :task-list="detailBottom.taskList"
           :total="pagination.total"
@@ -26,7 +27,7 @@
 <script>
 import courseDetailTop from './components/courseDetailTop'
 import courseDetailBottom from './components/courseDetailBottom'
-// import pageConfig from '@/components/SimplePagination/pagination.config'
+import pageConfig from '@/components/SimplePagination/pagination.config'
 export default {
   name: 'Detail',
   components: {
@@ -35,7 +36,7 @@ export default {
   },
   data() {
     return {
-      course_id: this.$route.params.course_id,
+      course_id: '',
       pagination: {
         pageSize: pageConfig.pageSize,
         stagingCurPage: 1,
@@ -43,7 +44,7 @@ export default {
         taskCurPage: 1,
         total: 0,
         taskTotal: 0,
-        stagingTotal: 0,
+        stagingTotal: 0
       },
       detailTop: {
         title: '',
@@ -56,11 +57,12 @@ export default {
         taskTypes: [],
         sourceList: [],
         taskList: [],
-        stagingList: [],
+        stagingList: []
       }
     }
   },
   async mounted() {
+    this.course_id = this.$route.params.course_id
     // 请求数据
     const res = await this.$store.dispatch('teachers/getCourseDetail', this.course_id)
     if (res.code === 20000) {
@@ -78,15 +80,18 @@ export default {
       this.detailBottom.sourceList = res2.data.list
       this.pagination.total = res2.data.listTotal
     }
-    const res3 = await this.$store.dispatch('teachers/getStagingSources', {course_id: this.course_id, page: this.pagination.stagingCurPage, limit: this.pagination.pageSize})
-    
+    const res3 = await this.$store.dispatch('teachers/getStagingSources', { course_id: this.course_id, page: this.pagination.stagingCurPage, limit: this.pagination.pageSize })
+    if (res3.code === 20000) {
+      console.log('here')
+      this.$set(this.pagination, 'stagingTotal', parseInt(res3.data.total))
+      this.detailBottom.stagingList = res3.data.sources
+    }
+
     const res4 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: this.course_id, page: this.pagination.taskCurPage, limit: this.pagination.pageSize })
     if (res4.code === 20000) {
       this.$set(this.pagination, 'taskTotal', parseInt(res4.data.listTotal))
       this.detailBottom.taskList = res4.data.list
     }
-
-    
   },
   methods: {
     async pagechange(page) {
@@ -99,8 +104,8 @@ export default {
         this.pagination.currentPage = page
       }
     },
-    async checkPageChange(page){
-      this.pagination.stagingCurPage = page;
+    async checkPageChange(page) {
+      this.pagination.stagingCurPage = page
     },
     handelQuest(value) {
       this.$store.dispatch('teachers/setCourseInfo', value)
@@ -133,11 +138,12 @@ export default {
         .catch(() => { return })
     },
     async renewList() {
-      const res2 = await this.$store.dispatch('teachers/getSourceListType', { course_id: this.course_id, page: this.pagination.currentPage, limit: this.pagination.pageSize })
+      // 上传之后renew staging list
+      const res2 = await this.$store.dispatch('teachers/getStagingSources', { course_id: this.course_id, page: this.pagination.currentPage, limit: this.pagination.pageSize })
       if (res2.code === 20000) {
-        this.$set(this.pagination, 'total', parseInt(res2.data.listTotal))
+        this.$set(this.pagination, 'stagingTotal', parseInt(res2.data.total))
         // this.$set(this.detailBottom, 'types', res2.data.types)
-        this.detailBottom.sourceList = res2.data.list
+        this.detailBottom.stagingList = res2.data.sources
       }
     },
     // 作业相关

@@ -211,16 +211,16 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async getStagingTypes({ commit }, data){
+  async getStagingTypes({ commit }, data) {
     const result = await getStagingTypes(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async getStagingFileUnderMajor({commit}, data){
+  async getStagingFileUnderMajor({ commit }, data) {
     const result = await getStagingFileUnderMajor(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

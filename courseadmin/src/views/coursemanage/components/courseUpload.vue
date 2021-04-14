@@ -19,26 +19,33 @@
         align="center"
         prop="upload_type"
         label="资源类型"
-        width="140"
       />
       <el-table-column
         align="center"
         prop="upload_title"
         label="资源标题"
       />
-      <el-table-column align="center" label="资源文件" width="180">
+      <el-table-column align="center" label="资源文件">
         <template slot-scope="scope">
           <span>{{ scope.row.upload_filename }}</span>
         </template>
       </el-table-column>
       <el-table-column v-if="!notCheck" align="center" label="资源状态">
-        <!-- <template slot-scope="scope">
-          
-          <el-tag type="danger">标签五</el-tag>
-        </template> -->
-        <el-tag type="warning">审核中</el-tag>
+        <template slot-scope="scope">
+          <el-tag type="warning" v-if="scope.row.upload_status===1">审核中</el-tag>
+          <el-tag type="danger" v-if="scope.row.upload_status===3">未通过</el-tag>
+          <div>
+            <el-button type="info" v-if="scope.row.upload_status===3">查看原因</el-button>
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column align="center" label="资源说明" width="140">
+      <el-table-column v-if="!notCheck" align="center" label="资源可见性">
+        <template slot-scope="scope">
+          <span v-if="scope.row.not_available2all">仅该课程学生可见</span>
+          <span v-if="!scope.row.not_available2all">任何学生可见</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="资源说明">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -47,7 +54,7 @@
           >查看</el-button>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" width="300">
+      <el-table-column align="center" label="操作" width="270">
         <template slot-scope="scope">
           <el-button
             type="primary"
@@ -121,9 +128,9 @@ export default {
   },
   methods: {
     pageChange(page) {
-      if(this.notCheck){
+      if (this.notCheck) {
         this.$emit('pageChange', page)
-      }else{
+      } else {
         this.$emit('checkPageChange', page)
       }
     },

@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.utils.encoding import escape_uri_path
 import cv2
-from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, StudentWork, StudentRoutesMap, TeacherRoutesMap, Routes
+from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, StudentWork, StudentRoutesMap, TeacherRoutesMap, Routes, StagingFile
 import json
 import base64
 
@@ -362,13 +362,14 @@ def up_source(request):
     fileList = []
     for i in range(int(count)):
         file1 = request.FILES.get('file' + str(i))
-        fileDir = os.path.join(settings.MEDIA_ROOT, 'source')
+        fileDir = os.path.join(settings.MEDIA_ROOT, 'stagingSource')
         filePath = os.path.join(fileDir, file1.name)
         with open(filePath, 'wb') as fp:
             for info in file1.chunks():
                 fp.write(info)
         # print(os.path.join('/upfile/source', file1.name))
-        f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, 0, department.dno, not_available_2_all, teacher, source, course)
+        f = StagingFile.stagingFileManager.createStagingFile(r'/upfile/stagingSource/'+file1.name, request.POST.get('title'), file1.name, describe, 1, not_available_2_all, course, teacher, source, department)
+        # f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, 0, department.dno, not_available_2_all, teacher, source, course)
         f.save()
         fileList.append(f)
 
@@ -376,10 +377,10 @@ def up_source(request):
     count = len(fileList)
     for item in fileList:
         dic = {
-            'upload_date': str(item.time).split()[0],
+            'upload_date': str(item.up_time).split()[0],
             'upload_type': item.sno.sname,
             'upload_title': item.title,
-            'upload_intro': item.describe,
+            'upload_intro': item.fileDes,
             'upload_filename': item.filename,
             'upload_filelink': item.url,
             'upload_id': item.id

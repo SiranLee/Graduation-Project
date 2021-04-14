@@ -245,3 +245,11 @@ export function modifySourceReadLimit(data) {
     data
   })
 }
+
+export function getStagingSources(data) {
+  return request({
+    url: '/get_staging_under_course/',
+    method: 'get',
+    params: data
+  })
+}

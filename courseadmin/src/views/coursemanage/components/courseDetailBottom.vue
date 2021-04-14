@@ -53,7 +53,7 @@ export default {
       type: Array,
       default: () => []
     },
-    stagingTotal:{
+    stagingTotal: {
       type: Number,
       default: 0
     },
@@ -77,7 +77,7 @@ export default {
     pagechange(page) {
       this.$emit('pageChange', page)
     },
-    checkPageChange(page){
+    checkPageChange(page) {
       this.$emit('checkPageChanged', page)
     },
     renewList() {
