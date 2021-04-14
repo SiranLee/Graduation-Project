@@ -210,7 +210,7 @@ export default {
       this.$emit('typeValueChange', newType)
     },
     statusValueChange(newStatus) {
-
+      this.$emit('statusValueChange', newStatus)
     },
     handleSizeChange(newSize) {
       this.$emit('pageSizeChange', newSize)
@@ -218,7 +218,7 @@ export default {
     handleCurrentChange(newPage) {
       this.$emit('currentPageChange', newPage)
     },
-    clearSelectParams(){
+    clearSelectParams() {
       this.$emit('clearSelectParams')
     },
     openOrDownload(url) {

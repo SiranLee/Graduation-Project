@@ -147,6 +147,43 @@ class File(models.Model):
     class Meta:
         db_table = "file"
 
+# 待审核资源
+class StagingFileManager(models.Manager):
+    def createStagingFile(self, url, title, filename, fileDes, fileStatus, cno, tno, sno, dno, vtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())), isDelete=False):
+        stagingfile = self.model()
+        stagingfile.up_time = vtime
+        stagingfile.url = url
+        stagingfile.title = title
+        stagingfile.filename = filename
+        stagingfile.isDelete = isDelete
+        stagingfile.fileDes = fileDes
+        stagingfile.fileStatus = fileStatus
+        stagingfile.cno = cno
+        stagingfile.sno = sno
+        stagingfile.tno = tno
+        stagingfile.dno = dno
+        return stagingfile
+
+class StagingFile(models.Model):
+    stagingFileManager = StagingFileManager()
+    up_time = models.DateTimeField(auto_now_add=True)
+    url = models.TextField()
+    title = models.CharField(max_length=30)
+    filename = models.TextField()
+    isDelete = models.BooleanField(default=False)
+    fileDes = models.TextField()
+    # 0: 未审核; 1: 审核通过; 2: 审核未通过
+    fileStatus = models.SmallIntegerField()
+    
+    cno = models.ForeignKey('Course', on_delete=models.CASCADE)
+    sno = models.ForeignKey('Source', on_delete=models.CASCADE)
+    tno = models.ForeignKey('Teacher', on_delete=models.CASCADE)
+    dno = models.ForeignKey('department', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "stagingfile"
+
+
 #6、学生表
 class StudentManager(models.Manager):
     def get_queryset(self):
@@ -489,6 +526,7 @@ admin.site.register(Department)
 admin.site.register(Course)
 admin.site.register(Source)
 admin.site.register(File)
+admin.site.register(StagingFile)
 admin.site.register(Student)
 admin.site.register(Mclass)
 admin.site.register(ImageStore)

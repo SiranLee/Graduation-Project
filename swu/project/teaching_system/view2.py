@@ -7,7 +7,7 @@ from datetime import datetime
 from django.utils.timezone import now, localtime
 from django.utils.encoding import escape_uri_path
 import cv2
-from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, Work, Homework, StudentWork, Routes, TeacherRoutesMap, AdminRoutesMap, StudentRoutesMap, RouteComponentMap
+from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, Work, Homework, StudentWork, Routes, TeacherRoutesMap, AdminRoutesMap, StudentRoutesMap, RouteComponentMap, StagingFile
 import json
 import base64
 from .models import StudentWork, StudentWorkSource
@@ -976,6 +976,56 @@ def source_type_change(request):
     
     totalCount = len(sources)
     start_index = start_index = (current_page-1) * page_size + 1
+    split_page(sources, current_page, page_size, start_index, totalCount, result)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount
+        }
+    }))
+
+# 获取审核状态选项
+def get_staging_types(request):
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'staging_types':[
+                {'name': '未审核', 'value': 0},
+                {'name': '审核中', 'value': 1},
+                {'name': '通过', 'value': 2},
+                {'name': '未通过', 'value': 3}
+            ]
+        }
+    }))
+
+# 按专业获取待审核的资源
+def get_staging_file_under_major(request):
+    major_id = request.GET.get('major_id')
+    source_type = request.GET.get('current_type')
+    source_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    sources = None
+    if source_type == '-1' and source_status == '-1':
+        #不过滤
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id)
+    elif source_type == '-1':
+        # 按状态过滤
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=source_status)
+    elif source_status == '-1':
+        # 按类型过滤
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=source_type)
+    else:
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=source_type, fileStatus=source_status)
+    
+    totalCount = len(sources)
+    start_index = (current_page-1) * page_size + 1
+    result = []
+
     split_page(sources, current_page, page_size, start_index, totalCount, result)
 
     return HttpResponse(json.dumps({

@@ -10,9 +10,11 @@
           :task-list="detailBottom.taskList"
           :total="pagination.total"
           :task-total="pagination.taskTotal"
+          :staging-total="pagination.stagingTotal"
           @renewList="renewList"
           @renewTasks="refreshTasks"
           @pageChange="pagechange"
+          @checkPageChanged="checkPageChange"
           @taskpageChange="taskpageChange"
           @deleteResource="delRes"
           @delTask="delTask"
@@ -24,7 +26,7 @@
 <script>
 import courseDetailTop from './components/courseDetailTop'
 import courseDetailBottom from './components/courseDetailBottom'
-import pageConfig from '@/components/SimplePagination/pagination.config'
+// import pageConfig from '@/components/SimplePagination/pagination.config'
 export default {
   name: 'Detail',
   components: {
@@ -36,10 +38,12 @@ export default {
       course_id: this.$route.params.course_id,
       pagination: {
         pageSize: pageConfig.pageSize,
-        currentPage: pageConfig.currentPage,
-        taskCurPage: pageConfig.currentPage,
+        stagingCurPage: 1,
+        currentPage: 1,
+        taskCurPage: 1,
         total: 0,
-        taskTotal: 0
+        taskTotal: 0,
+        stagingTotal: 0,
       },
       detailTop: {
         title: '',
@@ -51,7 +55,8 @@ export default {
         types: [],
         taskTypes: [],
         sourceList: [],
-        taskList: []
+        taskList: [],
+        stagingList: [],
       }
     }
   },
@@ -73,12 +78,15 @@ export default {
       this.detailBottom.sourceList = res2.data.list
       this.pagination.total = res2.data.listTotal
     }
-
-    const res3 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: this.course_id, page: this.pagination.taskCurPage, limit: this.pagination.pageSize })
-    if (res3.code === 20000) {
-      this.$set(this.pagination, 'taskTotal', parseInt(res3.data.listTotal))
-      this.detailBottom.taskList = res3.data.list
+    const res3 = await this.$store.dispatch('teachers/getStagingSources', {course_id: this.course_id, page: this.pagination.stagingCurPage, limit: this.pagination.pageSize})
+    
+    const res4 = await this.$store.dispatch('teachers/getReleasedTasks', { course_id: this.course_id, page: this.pagination.taskCurPage, limit: this.pagination.pageSize })
+    if (res4.code === 20000) {
+      this.$set(this.pagination, 'taskTotal', parseInt(res4.data.listTotal))
+      this.detailBottom.taskList = res4.data.list
     }
+
+    
   },
   methods: {
     async pagechange(page) {
@@ -90,6 +98,9 @@ export default {
         this.detailBottom.sourceList = res2.data.list
         this.pagination.currentPage = page
       }
+    },
+    async checkPageChange(page){
+      this.pagination.stagingCurPage = page;
     },
     handelQuest(value) {
       this.$store.dispatch('teachers/setCourseInfo', value)

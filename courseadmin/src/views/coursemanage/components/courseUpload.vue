@@ -13,7 +13,6 @@
         align="center"
         prop="upload_date"
         label="上传日期"
-        width="180"
         sortable
       />
       <el-table-column
@@ -31,6 +30,13 @@
         <template slot-scope="scope">
           <span>{{ scope.row.upload_filename }}</span>
         </template>
+      </el-table-column>
+      <el-table-column v-if="!notCheck" align="center" label="资源状态">
+        <!-- <template slot-scope="scope">
+          
+          <el-tag type="danger">标签五</el-tag>
+        </template> -->
+        <el-tag type="warning">审核中</el-tag>
       </el-table-column>
       <el-table-column align="center" label="资源说明" width="140">
         <template slot-scope="scope">
@@ -55,7 +61,7 @@
             @click="remove(scope.row.upload_id)"
           >删除</el-button>
           <el-popover
-            v-if="deletable"
+            v-if="deletable && notCheck"
             placement="top"
             width="150"
             trigger="click"
@@ -96,6 +102,10 @@ export default {
     deletable: {
       type: Boolean,
       default: true
+    },
+    notCheck: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -111,7 +121,11 @@ export default {
   },
   methods: {
     pageChange(page) {
-      this.$emit('pageChange', page)
+      if(this.notCheck){
+        this.$emit('pageChange', page)
+      }else{
+        this.$emit('checkPageChange', page)
+      }
     },
     remove(row) {
       this.$confirm('此操作将会删除数据,是否继续', '警告', {

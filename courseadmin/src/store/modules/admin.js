@@ -24,7 +24,9 @@
   searchTeacherWithNo,
   getSourceUnderMajor,
   getSourceUnderCourse,
-  sourceTypeChange } from '@/api/admin'
+  sourceTypeChange,
+  getStagingTypes,
+  getStagingFileUnderMajor } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -195,19 +197,33 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async getSourceUnderCourse({ commit }, data){
+  async getSourceUnderCourse({ commit }, data) {
     const result = await getSourceUnderCourse(data)
+    if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async sourceTypeChange({ commit }, data) {
+    const result = await sourceTypeChange(data)
+    if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getStagingTypes({ commit }, data){
+    const result = await getStagingTypes(data)
     if(result){
       return result
     }
     return Promise.reject(result)
   },
-  async sourceTypeChange({commit}, data){
-    const result = await sourceTypeChange(data)
+  async getStagingFileUnderMajor({commit}, data){
+    const result = await getStagingFileUnderMajor(data)
     if(result){
       return result
     }
-    return Promise.reject(reuslt)
+    return Promise.reject(result)
   }
 }
 

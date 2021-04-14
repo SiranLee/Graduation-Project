@@ -6,7 +6,10 @@
           <el-tab-pane label="资源上传">
             <course-base-info :types="types" @tabsClick="renewList" />
           </el-tab-pane>
-          <el-tab-pane label="已上传的资源">
+          <el-tab-pane label="待审核资源">
+            <course-uploaded :not-check="false" :source-list="stagingList" :total="stagingTotal" @deleteResource="deleteRes" @pageChange="checkPageChange" />
+          </el-tab-pane>
+          <el-tab-pane label="已审核资源">
             <course-uploaded :source-list="sourceList" :total="total" @deleteResource="deleteRes" @pageChange="pagechange" />
           </el-tab-pane>
           <el-tab-pane label="发布任务">
@@ -46,6 +49,14 @@ export default {
       type: Array,
       default: () => []
     },
+    stagingList: {
+      type: Array,
+      default: () => []
+    },
+    stagingTotal:{
+      type: Number,
+      default: 0
+    },
     total: {
       type: Number,
       default: 0
@@ -65,6 +76,9 @@ export default {
     },
     pagechange(page) {
       this.$emit('pageChange', page)
+    },
+    checkPageChange(page){
+      this.$emit('checkPageChanged', page)
     },
     renewList() {
       this.$emit('renewList')

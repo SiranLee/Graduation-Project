@@ -187,7 +187,7 @@ export function getSourceUnderMajor(data) {
   })
 }
 
-export function getSourceUnderCourse(data){
+export function getSourceUnderCourse(data) {
   return request({
     url: '/get_source_under_course/',
     method: 'get',
@@ -195,10 +195,25 @@ export function getSourceUnderCourse(data){
   })
 }
 
-export function sourceTypeChange(data){
+export function sourceTypeChange(data) {
   return request({
     url: '/source_type_change/',
-    method:'get',
+    method: 'get',
+    params: data
+  })
+}
+
+export function getStagingTypes(data){
+  return request({
+    url: '/get_staging_types/',
+    method: 'get'
+  })
+}
+
+export function getStagingFileUnderMajor(data){
+  return request({
+    url: '/get_staging_file_under_major/',
+    method: 'get',
     params: data
   })
 }
