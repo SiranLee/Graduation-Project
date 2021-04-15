@@ -1031,9 +1031,9 @@ def get_staging_file_under_major(request):
         sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=source_status)
     elif source_status == '-1':
         # 按类型过滤
-        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=source_type)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=Source.sourceManager.get(isDelete=False, sno=staging_type))
     else:
-        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=source_type, fileStatus=source_status)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=Source.sourceManager.get(isDelete=False, sno=staging_type), fileStatus=source_status)
     
     totalCount = len(sources)
     start_index = (current_page-1) * page_size + 1
@@ -1049,6 +1049,113 @@ def get_staging_file_under_major(request):
         }
     }))
 
+# 管理员根据课程来获取待审核资源
+def get_staging_sources_under_course(request):
+    course_id = request.GET.get('course_id')
+    staging_type = request.GET.get('current_type')
+    staging_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    sources = None
+    if staging_type == '-1' and staging_status == '-1':
+        #不过滤
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, cno=course_id)
+    elif staging_type == '-1':
+        # 按状态过滤
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, cno=course_id, fileStatus=staging_status)
+    elif staging_status == '-1':
+        # 按类型过滤
+        source_type = Source.sourceManager.get(isDelete=False, sno=staging_type)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, cno=course_id, sno=source_type)
+    else:
+        source_type = Source.sourceManager.get(isDelete=False, sno=staging_type)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, cno=course_id, sno=source_type, fileStatus=staging_status)
+
+    totalCount = len(sources)
+    start_index = (current_page - 1) * page_size + 1
+    result = []
+
+    split_page(sources, current_page, page_size, start_index, totalCount, result, True)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount
+        }
+    }))
+
+# 管理员根据资源类型来获取staging资源
+def get_staging_source_under_type(request):
+    major_id = request.GET.get('major_id')
+    course_id = request.GET.get('course_id')
+    current_type = request.GET.get('current_type')
+    current_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    source_type = Source.sourceManager.get(sno=current_type)
+
+    sources = None
+    if course_id == '-1' and current_status == '-1':
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, sno=source_type)
+    elif course_id == '-1':
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status, sno=source_type)
+    elif current_status == '-1':
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, cno=course_id, sno=source_type)
+    else:
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status, cno=course_id, sno=source_type)
+    
+    totalCount = len(sources)
+    start_index = (current_page - 1) * page_size + 1
+    result = []
+
+    split_page(sources, current_page, page_size, start_index, totalCount, result, True)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'sources': result,
+            'total': totalCount
+        }
+    }))
+
+# 管理员通过资源状态来获取staging资源
+def get_staging_source_under_status(request):
+    major_id = request.GET.get('major_id')
+    course_id = request.GET.get('course_id')
+    current_type = request.GET.get('current_type')
+    current_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    sources = None
+    if course_id == '-1' and current_type == '-1':
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status)
+    elif course_id == '-1':
+        source_type = Source.sourceManager.get(sno=current_type)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status, sno=source_type)
+    elif current_type == '-1':
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, cno=course_id, fileStatus=current_status)
+    else:
+        source_type = Source.sourceManager.get(sno=current_type)
+        sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status, cno=course_id, sno=source_type)
+
+    totalCount = len(sources)
+    start_index = (current_page - 1) * page_size + 1
+    result = []
+
+    split_page(sources, current_page, page_size, start_index, totalCount, result, True)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data': {
+            'sources': result,
+            'total': totalCount
+        }
+    }))
+    
 
 def create_staging_sources_dic(source):
     dic = {
@@ -1064,6 +1171,16 @@ def create_staging_sources_dic(source):
     }
     return dic
 
+def split_staging_page(sources, page_size, start_index, totalCount, result):
+    if start_index - 1 + page_size >= totalCount:
+        for source in sources[start_index-1:totalCount]:
+            # 此时不足一页或者刚好一页
+            result.append(create_staging_sources_dic(source))
+    else:
+        #此时超出一页,只获取一页的数据
+        for source in sources[start_index-1:start_index+page_size-1]:
+            result.append(create_staging_sources_dic(source))
+
 # 教师按照课程来获取待审核和未通过的资源
 def get_staging_under_course(request):
     course_id = request.GET.get('course_id')
@@ -1075,16 +1192,8 @@ def get_staging_under_course(request):
     start_index = (current_page - 1) * page_size + 1
     result = []
 
-    if start_index - 1 + page_size >= totalCount:
-        for source in sources[start_index-1:totalCount]:
-            # 此时不足一页或者刚好一页
-            result.append(create_staging_sources_dic(source))
-    else:
-        #此时超出一页,只获取一页的数据
-        for source in sources[start_index-1:start_index+page_size-1]:
-            result.append(create_staging_sources_dic(source))
+    split_staging_page(sources, page_size, start_index, totalCount, result)
     
-
     return HttpResponse(json.dumps({
         'code': 20000,
         'data':{

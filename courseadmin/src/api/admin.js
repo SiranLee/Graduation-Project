@@ -225,3 +225,27 @@ export function previewStagingSource(data){
     params: data
   })
 }
+
+export function getStagingSourcesUnderCourse(data){
+  return request({
+    url: '/get_staging_sources_under_course/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function getStagingSourceUnderType(data){
+  return request({
+    url: '/get_staging_source_under_type/',
+    method: 'get',
+    params: data
+  })
+}
+
+export function getStagingSourceUnderStatus(data){
+  return request({
+    url: '/get_staging_source_under_status/',
+    method: 'get',
+    params: data
+  })
+}

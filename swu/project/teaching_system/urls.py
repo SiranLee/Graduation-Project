@@ -92,7 +92,9 @@ urlpatterns = [
     re_path(r'^get_staging_file_under_major/$', view2.get_staging_file_under_major, name="get_staging_file_under_major"),
     re_path(r'^get_staging_under_course/$', view2.get_staging_under_course, name="get_staging_under_course"),
     re_path(r'^preview_staging_source/$', view2.preview_staging_source, name="preview_staging_source"),
-
+    re_path(r'^get_staging_sources_under_course/$', view2.get_staging_sources_under_course, name="get_staging_sources_under_course"),
+    re_path(r'^get_staging_source_under_type/$', view2.get_staging_source_under_type, name="get_staging_source_under_type"),
+    re_path(r'^get_staging_source_under_status/$', view2.get_staging_source_under_status, name="get_staging_source_under_status"),
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),
     re_path(r'^getImg/$', views.getImg, name='getImg'),

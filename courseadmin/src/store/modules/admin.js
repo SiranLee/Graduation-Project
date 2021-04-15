@@ -27,7 +27,10 @@
   sourceTypeChange,
   getStagingTypes,
   getStagingFileUnderMajor,
-  previewStagingSource } from '@/api/admin'
+  previewStagingSource,
+  getStagingSourcesUnderCourse,
+  getStagingSourceUnderType,
+  getStagingSourceUnderStatus } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -228,6 +231,27 @@ const actions = {
   },
   async previewStagingSource({ commit }, data){
     const result = await previewStagingSource(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getStagingSourcesUnderCourse({ commit }, data){
+    const result = await getStagingSourcesUnderCourse(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getStagingSourceUnderType({ commit }, data){
+    const result = await getStagingSourceUnderType(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async getStagingSourceUnderStatus({ commit }, data){
+    const result = await getStagingSourceUnderStatus(data)
     if(result){
       return result
     }
