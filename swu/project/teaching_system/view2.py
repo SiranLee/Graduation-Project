@@ -7,7 +7,7 @@ from datetime import datetime
 from django.utils.timezone import now, localtime
 from django.utils.encoding import escape_uri_path
 import cv2
-from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, Work, Homework, StudentWork, Routes, TeacherRoutesMap, AdminRoutesMap, StudentRoutesMap, RouteComponentMap, StagingFile
+from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, Work, Homework, StudentWork, Routes, TeacherRoutesMap, AdminRoutesMap, StudentRoutesMap, RouteComponentMap, StagingFile, StagingConvertPDF
 import json
 import base64
 from .models import StudentWork, StudentWorkSource
@@ -1100,6 +1100,14 @@ def preview_staging_source(request):
     source_link = request.GET.get('link')
     source_name = request.GET.get('name')
     # 先到文件夹中查看是否存在缓存，有就直接返回
+    target_staging_pdfs = StagingConvertPDF.stagingConvertPDFManager.filter(isDelete=False, staging_pdf_name=source_name)
+    if len(target_staging_pdfs) > 0:
+        return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'preview_link': target_staging_pdfs[0].staging_pdf_path
+        }
+    }))
     
     source_exact_path = settings.BASE_DIR + source_link
     
@@ -1111,6 +1119,9 @@ def preview_staging_source(request):
         preview_url = word2pdf_entrance(source_exact_path, settings.BASE_DIR)
     elif suffix == '.xls' or suffix == '.xlsx':
         preview_url = excel2pdf_entrance(source_exact_path, settings.BASE_DIR)
+
+    stagingConvertedPDF = StagingConvertPDF.stagingConvertPDFManager.createStagingConvertPDF(preview_url, source_name)
+    stagingConvertedPDF.save()
 
     return HttpResponse(json.dumps({
         'code': 20000,

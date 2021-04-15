@@ -43,7 +43,7 @@ def ppt2png(filename,dst_filename):
 	ppt = win32com.client.Dispatch('PowerPoint.Application')
 	#ppt.DisplayAlerts = False
 	pptSel = ppt.Presentations.Open(filename, WithWindow = False)
-	print(dst_filename)
+	# print(dst_filename)
 	pptSel.SaveAs(dst_filename,18); #with 17, jpeg
 	ppt.Quit()
 

@@ -185,6 +185,22 @@ class StagingFile(models.Model):
     class Meta:
         db_table = "stagingfile"
 
+class StagingConvertPDFManager(models.Manager):
+    def createStagingConvertPDF(self, staging_pdf_path, staging_pdf_name, isDelete=False):
+        stagingConvertPDF = self.model()
+        stagingConvertPDF.isDelete = isDelete
+        stagingConvertPDF.staging_pdf_path = staging_pdf_path
+        stagingConvertPDF.staging_pdf_name = staging_pdf_name
+        return stagingConvertPDF
+
+class StagingConvertPDF(models.Model):
+    stagingConvertPDFManager = StagingConvertPDFManager()
+    isDelete = models.BooleanField(default=False)
+    staging_pdf_path = models.TextField()
+    staging_pdf_name = models.TextField()
+
+    class Meta:
+        db_table = "staging_convert_pdf"
 
 #6、学生表
 class StudentManager(models.Manager):
@@ -529,6 +545,7 @@ admin.site.register(Course)
 admin.site.register(Source)
 admin.site.register(File)
 admin.site.register(StagingFile)
+admin.site.register(StagingConvertPDF)
 admin.site.register(Student)
 admin.site.register(Mclass)
 admin.site.register(ImageStore)
