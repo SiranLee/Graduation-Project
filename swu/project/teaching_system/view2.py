@@ -1183,11 +1183,12 @@ def split_staging_page(sources, page_size, start_index, totalCount, result):
 
 # 教师按照课程来获取待审核和未通过的资源
 def get_staging_under_course(request):
-    course_id = request.GET.get('course_id')
+    course_no = request.GET.get('course_id')
     current_page = int(request.GET.get('page'))
     page_size = int(request.GET.get('limit'))
-
-    sources = StagingFile.stagingFileManager.filter(fileStatus=1 or 3)
+    course = Course.courseManager.get(isDelete=False, no=course_no)
+    
+    sources = StagingFile.stagingFileManager.filter(cno=course, fileStatus=1 or 3)
     totalCount = len(sources)
     start_index = (current_page - 1) * page_size + 1
     result = []

@@ -7,7 +7,7 @@
             <course-base-info :types="types" @tabsClick="renewList" />
           </el-tab-pane>
           <el-tab-pane label="待审核资源">
-            <course-uploaded :not-check="false" :source-list="stagingList" :total="stagingTotal" @deleteResource="deleteRes" @pageChange="checkPageChange" />
+            <course-uploaded :not-check="false" :source-list="stagingList" :total="stagingTotal" @deleteResource="deleteRes" @checkPageChange="checkPageChange" />
           </el-tab-pane>
           <el-tab-pane label="已审核资源">
             <course-uploaded :source-list="sourceList" :total="total" @deleteResource="deleteRes" @pageChange="pagechange" />
@@ -78,6 +78,7 @@ export default {
       this.$emit('pageChange', page)
     },
     checkPageChange(page) {
+      console.log('******************')
       this.$emit('checkPageChanged', page)
     },
     renewList() {

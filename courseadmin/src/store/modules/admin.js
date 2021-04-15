@@ -229,30 +229,30 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async previewStagingSource({ commit }, data){
+  async previewStagingSource({ commit }, data) {
     const result = await previewStagingSource(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async getStagingSourcesUnderCourse({ commit }, data){
+  async getStagingSourcesUnderCourse({ commit }, data) {
     const result = await getStagingSourcesUnderCourse(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async getStagingSourceUnderType({ commit }, data){
+  async getStagingSourceUnderType({ commit }, data) {
     const result = await getStagingSourceUnderType(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async getStagingSourceUnderStatus({ commit }, data){
+  async getStagingSourceUnderStatus({ commit }, data) {
     const result = await getStagingSourceUnderStatus(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

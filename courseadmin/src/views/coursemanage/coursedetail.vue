@@ -106,6 +106,11 @@ export default {
     },
     async checkPageChange(page) {
       this.pagination.stagingCurPage = page
+      const res3 = await this.$store.dispatch('teachers/getStagingSources', { course_id: this.course_id, page: this.pagination.stagingCurPage, limit: this.pagination.pageSize })
+      if (res3.code === 20000) {
+        this.$set(this.pagination, 'stagingTotal', parseInt(res3.data.total))
+        this.detailBottom.stagingList = res3.data.sources
+      }
     },
     handelQuest(value) {
       this.$store.dispatch('teachers/setCourseInfo', value)

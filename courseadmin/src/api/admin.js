@@ -218,7 +218,7 @@ export function getStagingFileUnderMajor(data) {
   })
 }
 
-export function previewStagingSource(data){
+export function previewStagingSource(data) {
   return request({
     url: '/preview_staging_source/',
     method: 'get',
@@ -226,7 +226,7 @@ export function previewStagingSource(data){
   })
 }
 
-export function getStagingSourcesUnderCourse(data){
+export function getStagingSourcesUnderCourse(data) {
   return request({
     url: '/get_staging_sources_under_course/',
     method: 'get',
@@ -234,7 +234,7 @@ export function getStagingSourcesUnderCourse(data){
   })
 }
 
-export function getStagingSourceUnderType(data){
+export function getStagingSourceUnderType(data) {
   return request({
     url: '/get_staging_source_under_type/',
     method: 'get',
@@ -242,7 +242,7 @@ export function getStagingSourceUnderType(data){
   })
 }
 
-export function getStagingSourceUnderStatus(data){
+export function getStagingSourceUnderStatus(data) {
   return request({
     url: '/get_staging_source_under_status/',
     method: 'get',

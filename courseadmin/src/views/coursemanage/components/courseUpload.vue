@@ -32,10 +32,10 @@
       </el-table-column>
       <el-table-column v-if="!notCheck" align="center" label="资源状态">
         <template slot-scope="scope">
-          <el-tag type="warning" v-if="scope.row.upload_status===1">审核中</el-tag>
-          <el-tag type="danger" v-if="scope.row.upload_status===3">未通过</el-tag>
+          <el-tag v-if="scope.row.upload_status===1" type="warning">审核中</el-tag>
+          <el-tag v-if="scope.row.upload_status===3" type="danger">未通过</el-tag>
           <div>
-            <el-button type="info" v-if="scope.row.upload_status===3">查看原因</el-button>
+            <el-button v-if="scope.row.upload_status===3" type="info">查看原因</el-button>
           </div>
         </template>
       </el-table-column>

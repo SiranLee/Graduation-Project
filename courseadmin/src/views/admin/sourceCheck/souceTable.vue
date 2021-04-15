@@ -50,9 +50,10 @@
           :value="item.value"
         />
       </el-select>
-      <el-button type="warning" @click="clearSelectParams"
-        >清空所选参数</el-button
-      >
+      <el-button
+        type="warning"
+        @click="clearSelectParams"
+      >清空所选参数</el-button>
     </div>
     <div class="paginationContainer">
       <el-pagination
@@ -82,15 +83,18 @@
         label="资源状态"
       >
         <template slot-scope="scope">
-          <el-tag type="info" v-if="scope.row.source_status == 1"
-            >待审核</el-tag
-          >
-          <el-tag type="success" v-if="scope.row.source_status == 2"
-            >通过</el-tag
-          >
-          <el-tag type="danger" v-if="scope.row.source_status == 3"
-            >通过</el-tag
-          >
+          <el-tag
+            v-if="scope.row.source_status == 1"
+            type="info"
+          >待审核</el-tag>
+          <el-tag
+            v-if="scope.row.source_status == 2"
+            type="success"
+          >通过</el-tag>
+          <el-tag
+            v-if="scope.row.source_status == 3"
+            type="danger"
+          >通过</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -101,9 +105,9 @@
       />
       <el-table-column v-if="isCheck" align="center" label="资源可见性">
         <template slot-scope="scope">
-          <span v-if="scope.row.source_not_available2all"
-            >仅该课程学生可见</span
-          >
+          <span
+            v-if="scope.row.source_not_available2all"
+          >仅该课程学生可见</span>
           <span v-if="!scope.row.source_not_available2all">任何学生可见</span>
         </template>
       </el-table-column>
@@ -113,8 +117,7 @@
             type="primary"
             size="small"
             @click="browseSourceDes(scope.row)"
-            >查看</el-button
-          >
+          >查看</el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="isCheck" align="center" label="资源预览">
@@ -122,10 +125,9 @@
           <el-button
             type="primary"
             size="small"
-            @click="openOrDownload(scope.row)"
             :loading="scope.row.previewLoading"
-            >预览</el-button
-          >
+            @click="openOrDownload(scope.row)"
+          >预览</el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="isCheck" align="center" label="操作" width="270">
@@ -134,14 +136,12 @@
             type="danger"
             size="small"
             @click="failPass(scope.row.source_id)"
-            >打 回</el-button
-          >
+          >打 回</el-button>
           <el-button
             type="success"
             size="small"
             @click="sourcePass(scope.row.source_id)"
-            >通 过</el-button
-          >
+          >通 过</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -167,145 +167,145 @@
   </div>
 </template>
 <script>
-import { registerCoordinateSystem } from "echarts";
+import { registerCoordinateSystem } from 'echarts'
 export default {
   props: {
     isCheck: {
       type: Boolean,
-      default: false,
+      default: false
     },
     isBrowse: {
       type: Boolean,
-      default: false,
+      default: false
     },
     tableData: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     majorOptions: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     courseOptions: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     typeOptions: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     statusOptions: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     majorValue: {
       type: String,
-      default: "",
+      default: ''
     },
     courseValue: {
       type: String,
-      default: "",
+      default: ''
     },
     typeValue: {
       type: String,
-      default: "",
+      default: ''
     },
     statusValue: {
       type: String,
-      default: "",
+      default: ''
     },
     currentPage: {
       type: Number,
-      default: 1,
+      default: 1
     },
     pageSize: {
       type: Number,
-      default: 10,
+      default: 10
     },
     sourceTotal: {
       type: Number,
-      default: 0,
-    },
+      default: 0
+    }
   },
   data() {
     return {
-      rootLink: "",
+      rootLink: '',
       sourceDesDialogVisible: false,
       dialogVisible: false,
-      reasonForFail: "",
-      sourceDes: "",
-      currentSourceId: "",
-    };
+      reasonForFail: '',
+      sourceDes: '',
+      currentSourceId: ''
+    }
   },
   mounted() {
     // 请求数据
-    this.rootLink = process.env.VUE_APP_BASE_API;
+    this.rootLink = process.env.VUE_APP_BASE_API
   },
   methods: {
     majorValueChange(newMajor) {
-      this.$emit("majorValueChange", newMajor);
+      this.$emit('majorValueChange', newMajor)
     },
     courseValueChange(newCourse) {
-      this.$emit("courseValueChange", newCourse);
+      this.$emit('courseValueChange', newCourse)
     },
     typeValueChange(newType) {
-      this.$emit("typeValueChange", newType);
+      this.$emit('typeValueChange', newType)
     },
     statusValueChange(newStatus) {
-      this.$emit("statusValueChange", newStatus);
+      this.$emit('statusValueChange', newStatus)
     },
     handleSizeChange(newSize) {
-      this.$emit("pageSizeChange", newSize);
+      this.$emit('pageSizeChange', newSize)
     },
     handleCurrentChange(newPage) {
-      this.$emit("currentPageChange", newPage);
+      this.$emit('currentPageChange', newPage)
     },
     clearSelectParams() {
-      this.$emit("clearSelectParams");
+      this.$emit('clearSelectParams')
     },
     openOrDownload(row) {
-      let type = row.source_name.substring(row.source_name.lastIndexOf('.'))
-      if (row.source_type == "图片" || row.source_type == "视频" || type == '.pdf') {
-        window.open(this.rootLink + row.source_link);
-        return;
+      const type = row.source_name.substring(row.source_name.lastIndexOf('.'))
+      if (row.source_type == '图片' || row.source_type == '视频' || type == '.pdf') {
+        window.open(this.rootLink + row.source_link)
+        return
       }
-      row.previewLoading = true;
+      row.previewLoading = true
       this.$store
-        .dispatch("admin/previewStagingSource", {
+        .dispatch('admin/previewStagingSource', {
           id: row.source_id,
           link: row.source_link,
-          name: row.source_name,
+          name: row.source_name
         })
         .then((res) => {
-          let url = res.data.preview_link;
-          row.previewLoading = false;
-          window.open(this.rootLink + url);
+          const url = res.data.preview_link
+          row.previewLoading = false
+          window.open(this.rootLink + url)
         })
         .catch((err) => {
           this.$message({
-            message: "出现错误，请刷新后稍后重试",
-            type: "warning",
-          });
-          row.previewLoading = false;
-        });
+            message: '出现错误，请刷新后稍后重试',
+            type: 'warning'
+          })
+          row.previewLoading = false
+        })
     },
     failPass(sourceId) {
-      this.dialogVisible = true;
-      this.currentSourceId = sourceId;
+      this.dialogVisible = true
+      this.currentSourceId = sourceId
     },
     submitReason() {
       // 资源未通过提交错误信息
     },
     sourcePass(sourceId) {
       // 资源通过
-      this.currentSourceId = sourceId;
+      this.currentSourceId = sourceId
     },
     browseSourceDes(row) {
-      this.sourceDesDialogVisible = true;
-      this.sourceDes = row.source_des;
-    },
-  },
-};
+      this.sourceDesDialogVisible = true
+      this.sourceDes = row.source_des
+    }
+  }
+}
 </script>
 <style scoped>
 .top_choose_bar {

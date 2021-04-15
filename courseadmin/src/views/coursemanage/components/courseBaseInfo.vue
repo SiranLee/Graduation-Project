@@ -183,6 +183,7 @@ export default {
             type: 'error'
           })
           this.form.fileList = []
+          this.submitting = false
         })
     },
     contentChange(content) {
