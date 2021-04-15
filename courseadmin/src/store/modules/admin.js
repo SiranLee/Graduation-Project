@@ -26,7 +26,8 @@
   getSourceUnderCourse,
   sourceTypeChange,
   getStagingTypes,
-  getStagingFileUnderMajor } from '@/api/admin'
+  getStagingFileUnderMajor,
+  previewStagingSource } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -221,6 +222,13 @@ const actions = {
   async getStagingFileUnderMajor({ commit }, data) {
     const result = await getStagingFileUnderMajor(data)
     if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async previewStagingSource({ commit }, data){
+    const result = await previewStagingSource(data)
+    if(result){
       return result
     }
     return Promise.reject(result)

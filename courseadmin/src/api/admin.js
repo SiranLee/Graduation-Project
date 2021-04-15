@@ -217,3 +217,11 @@ export function getStagingFileUnderMajor(data) {
     params: data
   })
 }
+
+export function previewStagingSource(data){
+  return request({
+    url: '/preview_staging_source/',
+    method: 'get',
+    params: data
+  })
+}

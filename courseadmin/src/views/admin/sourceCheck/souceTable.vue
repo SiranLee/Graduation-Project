@@ -70,7 +70,13 @@
         align="center"
         prop="source_status"
         label="资源状态"
-      />
+      >
+        <template slot-scope="scope">
+          <el-tag type="info" v-if="scope.row.source_status == 1">待审核</el-tag>
+          <el-tag type="success" v-if="scope.row.source_status == 2">通过</el-tag>
+          <el-tag type="danger" v-if="scope.row.source_status == 3">通过</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column
         v-if="isBrowse"
         prop="source_download_time"
@@ -79,8 +85,8 @@
       />
       <el-table-column v-if="isCheck" align="center" label="资源可见性">
         <template slot-scope="scope">
-          <span v-if="scope.row.not_available2all">仅该课程学生可见</span>
-          <span v-if="!scope.row.not_available2all">任何学生可见</span>
+          <span v-if="scope.row.source_not_available2all">仅该课程学生可见</span>
+          <span v-if="!scope.row.source_not_available2all">任何学生可见</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="资源说明">
@@ -94,17 +100,18 @@
         label="资源预览"
       >
         <template slot-scope="scope">
-          <el-button type="primary" @click="openOrDownload(scope.source_link)">预览</el-button>
+          <el-button type="primary" size="small" @click="openOrDownload(scope.row)" :loading="scope.row.previewLoading">预览</el-button>
         </template>
       </el-table-column>
       <el-table-column
         v-if="isCheck"
         align="center"
         label="操作"
+        width="270"
       >
         <template slot-scope="scope">
-          <el-button type="danger" @click="failPass(scope.source_id)">打 回</el-button>
-          <el-button type="success" @click="sourcePass(scope.source_id)">通 过</el-button>
+          <el-button type="danger" size="small" @click="failPass(scope.row.source_id)">打 回</el-button>
+          <el-button type="success" size="small"  @click="sourcePass(scope.row.source_id)">通 过</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -193,15 +200,17 @@ export default {
   },
   data() {
     return {
+      rootLink: '',
       sourceDesDialogVisible: false,
       dialogVisible: false,
       reasonForFail: '',
       sourceDes: '',
-      currentSourceId: ''
+      currentSourceId: '',
     }
   },
   mounted() {
     // 请求数据
+    this.rootLink = process.env.VUE_APP_BASE_API
   },
   methods: {
     majorValueChange(newMajor) {
@@ -225,11 +234,19 @@ export default {
     clearSelectParams() {
       this.$emit('clearSelectParams')
     },
-    openOrDownload(url) {
+    openOrDownload(row) {
+      if(row.source_type == '图片' || row.source_type == '视频'){
+        window.open(this.rootLink + row.source_link)
+        return
+      }
+      row.previewLoading = true
+      // /upfile/stagingSource/earth.jpg D:\项目们\毕设\Graduation-Project\swu\project\teaching_system
+      const result = this.$store.dispatch('admin/previewStagingSource', {id: row.source_id, link: row.source_link, name: row.source_name})
 
+      row.previewLoading = false
     },
     failPass(sourceId) {
-      this.dialogVisible = false
+      this.dialogVisible = true
       this.currentSourceId = sourceId
     },
     submitReason() {

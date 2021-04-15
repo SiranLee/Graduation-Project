@@ -63,12 +63,17 @@ export default {
         staging_file_types.data.staging_types.forEach(item => { $this.statusOptions.push({ label: item.name, value: item.value }) })
         const data_types = await this.$store.dispatch('teachers/getTypes')
         this.typeOptions = data_types.data.types
+        
       }
       this.majorValue = newMajor
       const current_type = this.typeValue.length === 0 ? '-1' : this.typeValue
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该专业下上传的待审核的资源
-      const data = await this.$store.dispatch('admin/getStagingFileUnderMajor', { major_id: this.majorValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
+      const stagingSources = await this.$store.dispatch('admin/getStagingFileUnderMajor', { major_id: this.majorValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
+      stagingSources.data.sources.forEach(item => item.previewLoading = false)
+      this.tableData = stagingSources.data.sources
+      
+      this.stagingFileTotal = stagingSources.data.total
     },
     // 课程改变
     courseChange(newCourse) {

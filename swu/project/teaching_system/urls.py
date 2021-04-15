@@ -91,6 +91,7 @@ urlpatterns = [
     re_path(r'^get_staging_types/$', view2.get_staging_types, name="get_staging_types"),
     re_path(r'^get_staging_file_under_major/$', view2.get_staging_file_under_major, name="get_staging_file_under_major"),
     re_path(r'^get_staging_under_course/$', view2.get_staging_under_course, name="get_staging_under_course"),
+    re_path(r'^preview_staging_source/$', view2.preview_staging_source, name="preview_staging_source"),
 
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),

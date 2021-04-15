@@ -855,27 +855,41 @@ def modify_read_limit(request):
     }))
 
 from django.db.models import Count
-def create_source_dic(source):
-    dic = {
-        'up_date': str(source.time).split()[0],
-        'source_type': source.sno.sname,
-        'source_title': source.title,
-        'source_name': source.filename,
-        'source_course': source.no.name,
-        'source_des': source.describe,
-        'source_download_time': source.download_times,
-    }
+def create_source_dic(source, staging=False):
+    if staging :
+        dic = {
+            'source_id': source.id,
+            'up_date': str(source.up_time).split()[0],
+            'source_type': source.sno.sname,
+            'source_title': source.title,
+            'source_name': source.filename,
+            'source_course': source.cno.name,
+            'source_des': source.fileDes,
+            'source_link': source.url,
+            'source_status': source.fileStatus,
+            'source_not_available2all': source.not_available2all
+        }
+    else:
+        dic = {
+            'up_date': str(source.time).split()[0],
+            'source_type': source.sno.sname,
+            'source_title': source.title,
+            'source_name': source.filename,
+            'source_course': source.no.name,
+            'source_des': source.describe,
+            'source_download_time': source.download_times,
+        }
     return dic
 
-def split_page(sources, current_page, page_size, start_index, totalCount, result):
+def split_page(sources, current_page, page_size, start_index, totalCount, result, staging=False):
     if start_index - 1 + page_size >= totalCount:
         for source in sources[start_index-1:totalCount]:
             # 此时不足一页或者刚好一页
-            result.append(create_source_dic(source))
+            result.append(create_source_dic(source, staging))
     else:
         #此时超出一页,只获取一页的数据
         for source in sources[start_index-1:start_index+page_size-1]:
-            result.append(create_source_dic(source))
+            result.append(create_source_dic(source, staging))
     
 
 # 根据专业id来查已上传已审核的资源
@@ -993,8 +1007,7 @@ def get_staging_types(request):
         'code': 20000,
         'data': {
             'staging_types':[
-                {'name': '未审核', 'value': 0},
-                {'name': '审核中', 'value': 1},
+                {'name': '待审核', 'value': 1},
                 {'name': '通过', 'value': 2},
                 {'name': '未通过', 'value': 3}
             ]
@@ -1026,7 +1039,7 @@ def get_staging_file_under_major(request):
     start_index = (current_page-1) * page_size + 1
     result = []
 
-    split_page(sources, current_page, page_size, start_index, totalCount, result)
+    split_page(sources, current_page, page_size, start_index, totalCount, result, True)
 
     return HttpResponse(json.dumps({
         'code': 20000,
@@ -1077,5 +1090,31 @@ def get_staging_under_course(request):
         'data':{
             'sources': result,
             'total': totalCount
+        }
+    }))
+
+from .convert2pdf import word2pdf_entrance, excel2pdf_entrance, ppt2pdf_entrance
+# 上传的资源预览
+def preview_staging_source(request):
+    source_id = request.GET.get('id')
+    source_link = request.GET.get('link')
+    source_name = request.GET.get('name')
+    # 先到文件夹中查看是否存在缓存，有就直接返回
+    
+    source_exact_path = settings.BASE_DIR + source_link
+    
+    suffix = os.path.splitext(source_link)[1]
+    preview_url = ''
+    if suffix == '.pptx' or suffix == '.ppt':
+        preview_url = ppt2pdf_entrance(source_exact_path, settings.BASE_DIR)
+    elif suffix == '.docx' or suffix == '.doc':
+        preview_url = word2pdf_entrance(source_exact_path, settings.BASE_DIR)
+    elif suffix == '.xls' or suffix == '.xlsx':
+        preview_url = excel2pdf_entrance(source_exact_path, settings.BASE_DIR)
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'preview_link': preview_url
         }
     }))
