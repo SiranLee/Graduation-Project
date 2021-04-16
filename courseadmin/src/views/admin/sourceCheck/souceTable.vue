@@ -123,7 +123,7 @@
       <el-table-column v-if="isCheck" align="center" label="资源预览">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.source_status === 1 || scope.row.source_status === 3"
+            :disabled="scope.row.source_status === 2"
             type="primary"
             size="small"
             :loading="scope.row.previewLoading"
@@ -140,6 +140,7 @@
             @click="failPass(scope.row.source_id)"
           >打 回</el-button>
           <el-button
+            :disabled="scope.row.source_status===2"
             type="success"
             size="small"
             @click="sourcePass(scope.row.source_id)"
@@ -149,7 +150,7 @@
             type="danger"
             size="small"
             @click="deletePassStaging(scope.row)"
-          ></el-button>
+          >删除此记录</el-button>
           <el-button 
             v-if="scope.row.source_status === 3"
             type="info"

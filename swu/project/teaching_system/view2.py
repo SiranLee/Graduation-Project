@@ -1213,7 +1213,7 @@ def change_staging_status(request):
     staging_id = request.GET.get('staging_id')
 
     staging_source = StagingFile.stagingFileManager.get(isDelete=False, pk=staging_id)
-    if is_fail:
+    if is_fail == 'true':
         # 打回
         staging_source.isDelete = False
         staging_source.fileStatus = 3
@@ -1227,17 +1227,18 @@ def change_staging_status(request):
         origin_path = os.path.join(os.path.join(settings.MEDIA_ROOT, 'stagingSource'), staging_source.filename)
         dest_path = os.path.join(os.path.join(settings.MEDIA_ROOT, 'source'), staging_source.filename)
         shutil.move(origin_path, dest_path)
-        # 向File模型中添加对应项目 TODO: 该staging_source.url
+        # 向File模型中添加对应项目 
         source_file = File.fileManager.createFile(staging_source.fileDes, 
         r'/upfile/source/'+staging_source.filename, staging_source.title, staging_source.filename, 
-        0, staging_source.dno, staging_source.not_available2all, staging_source.tno, 
+        0, staging_source.dno.dno, staging_source.not_available2all, staging_source.tno, 
         staging_source.sno, staging_source.cno, staging_source.up_time)
         source_file.save()
         # 删除stagingConvertFiles文件夹中的对应文件
         convertpdf_path = os.path.join(os.path.join(settings.MEDIA_ROOT, 'stagingConvertFiles'), os.path.splitext(staging_source.filename)[0]+'.pdf') 
-        os.remove(convertpdf_path)
-        # 删除staging_convert_pdf中的对应记录
-        StagingConvertPDF.stagingConvertPDFManager.get(staging_pdf_name=staging_source.filename).delete()
+        if os.path.isfile(convertpdf_path):
+            os.remove(convertpdf_path)
+            # 删除staging_convert_pdf中的对应记录
+            StagingConvertPDF.stagingConvertPDFManager.get(staging_pdf_name=staging_source.filename).delete()
         
     # staging_source记录保存
     staging_source.save()
