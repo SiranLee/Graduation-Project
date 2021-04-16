@@ -250,10 +250,18 @@ export function getStagingSourceUnderStatus(data) {
   })
 }
 
-export function changeStagingStatus(data){
+export function changeStagingStatus(data) {
   return request({
     url: '/change_staging_status/',
     method: 'get',
     params: data
+  })
+}
+
+export function deletePassStaging(data){
+  return request({
+    url: '/del_pass_staging/',
+    method: 'post',
+    data
   })
 }

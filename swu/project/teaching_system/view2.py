@@ -1250,6 +1250,21 @@ def change_staging_status(request):
         }
     }))
 
+# 删除已经通过的文件
+def del_pass_staging(request):
+    pass_staging_id = json.loads(request.body)['id']
+
+    pass_staging_source = StagingFile.stagingFileManager.get(pk=pass_staging_id)
+
+    pass_staging_source.delete()
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'message': 'ok'
+        }
+    }))
+
 from .convert2pdf import word2pdf_entrance, excel2pdf_entrance, ppt2pdf_entrance
 # 上传的资源预览
 def preview_staging_source(request):

@@ -22,6 +22,7 @@
       @statusValueChange="statusValueChanged"
       @clearSelectParams="clearSelectedParams"
       @statusChange="statusChanged"
+      @delPassStaging="deletePassStaging"
     />
   </div>
 </template>
@@ -61,6 +62,7 @@ export default {
     async majorChange(newMajor) {
       const $this = this
       this.courseValue = ''
+      this.currentPage = 1
       this.selectChangePointer = 'major'
       if (this.typeOptions.length === 0 && this.statusOptions.length === 0) {
         const staging_file_types = await this.$store.dispatch('admin/getStagingTypes')
@@ -73,7 +75,7 @@ export default {
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该专业下上传的待审核的资源
       const stagingSources = await this.$store.dispatch('admin/getStagingFileUnderMajor', { major_id: this.majorValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      stagingSources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
+      stagingSources.data.sources.forEach(item => { item.previewLoading = false; item.passLoading = false })
       this.tableData = stagingSources.data.sources
       this.stagingFileTotal = stagingSources.data.total
       // 请求该专业下的课程
@@ -88,11 +90,12 @@ export default {
     async courseChange(newCourse) {
       this.courseValue = newCourse
       this.selectChangePointer = 'course'
+      this.currentPage = 1
       const current_type = this.typeValue.length === 0 ? '-1' : this.typeValue
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该课程下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourcesUnderCourse', { course_id: this.courseValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
+      sources.data.sources.forEach(item => { item.previewLoading = false; item.passLoading = false })
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -100,11 +103,12 @@ export default {
     async typeValueChanged(newType) {
       this.typeValue = newType
       this.selectChangePointer = 'type'
+      this.currentPage = 1
       const current_course = this.courseValue.length === 0 ? '-1' : this.courseValue
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该类型下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourceUnderType', { major_id: this.majorValue, course_id: current_course, current_type: this.typeValue, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
+      sources.data.sources.forEach(item => { item.previewLoading = false; item.passLoading = false })
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -112,11 +116,12 @@ export default {
     async statusValueChanged(newStatus) {
       this.statusValue = newStatus
       this.selectChangePointer = 'status'
+      this.currentPage = 1
       const current_type = this.typeValue.length === 0 ? '-1' : this.typeValue
       const current_course = this.courseValue.length === 0 ? '-1' : this.courseValue
       // 请求该状态下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourceUnderStatus', { major_id: this.majorValue, course_id: current_course, current_type: current_type, current_status: this.statusValue, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
+      sources.data.sources.forEach(item => { item.previewLoading = false; item.passLoading = false })
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -156,7 +161,7 @@ export default {
         default:
           break
       }
-      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
+      sources.data.sources.forEach(item => { item.previewLoading = false; item.passLoading = false })
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -171,15 +176,26 @@ export default {
       this.tableData.splice(0, this.tableData.length)
     },
     // 状态改变
-    async statusChanged({ isFail, reasonForFail, staging_id, row}){
-      if(!isFail) row.passLoading = true
-      const responce = await this.$store.dispatch('admin/changeStagingStatus', {isFail, reasonForFail, staging_id})
-      if(responce.data.message==='ok'){
+    async statusChanged({ isFail, reasonForFail, staging_id, row }) {
+      if (!isFail) row.passLoading = true
+      const responce = await this.$store.dispatch('admin/changeStagingStatus', { isFail, reasonForFail, staging_id })
+      row.passLoading = false
+      if (responce.data.message === 'ok') {
         // 刷新
         this.paginationChanged()
-        row.passLoading = false
         this.$message({
           message: '提交成功',
+          type: 'success'
+        })
+      }
+    },
+    async deletePassStaging(row){
+      
+      const result = await this.$store.dispatch('admin/deletePassStaging', {id: row.source_id})
+      if(result.data.message === 'ok'){
+        this.paginationChanged()
+        this.$message({
+          message: '操作成功',
           type: 'success'
         })
       }

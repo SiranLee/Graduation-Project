@@ -134,12 +134,12 @@
       <el-table-column v-if="isCheck" align="center" label="操作" width="270">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.source_status === 1"
             type="danger"
             size="small"
-            v-if="scope.row.source_status === 1"
             @click="failPass(scope.row.source_id)"
           >打 回</el-button>
-          <el-button 
+          <el-button
             v-if="scope.row.source_status === 3"
             type="info"
             size="small"
@@ -169,9 +169,9 @@
       :before-close="handleClose"
       width="50%"
     >
-      <el-input :disabled="viewReason" v-model="reasonForFail" placeholder="请填写打回原因" />
+      <el-input v-model="reasonForFail" :disabled="viewReason" placeholder="请填写打回原因" />
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="submitReason" :disabled="reasonForFail.length === 0 || viewReason">提 交</el-button>
+        <el-button type="success" :disabled="reasonForFail.length === 0 || viewReason" @click="submitReason">提 交</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -243,7 +243,7 @@ export default {
       type: Number,
       default: 0
     },
-    passLoading:{
+    passLoading: {
       type: Boolean,
       default: false
     }
@@ -318,25 +318,27 @@ export default {
     },
     submitReason() {
       // 资源未通过提交错误信息
-      this.$emit('statusChange', {isFail: true, reasonForFail:this.reasonForFail, staging_id:this.currentSourceId})
+      this.$emit('statusChange', { isFail: true, reasonForFail: this.reasonForFail, staging_id: this.currentSourceId })
     },
     sourcePass(row) {
       // 资源通过
       this.currentSourceId = row.source_id
 
-      this.$emit('statusChange', {isFail: false, reasonForFail: this.reasonForFail, staging_id:this.currentSourceId, row})
+      this.$emit('statusChange', { isFail: false, reasonForFail: this.reasonForFail, staging_id: this.currentSourceId, row })
     },
     browseSourceDes(row) {
       this.sourceDesDialogVisible = true
       this.sourceDes = row.source_des
     },
-    deletePassStaging(row){},
-    showFailReason(row){
+    deletePassStaging(row) {
+      this.$emit('delPassStaging', row)
+    },
+    showFailReason(row) {
       this.viewReason = true
       this.reasonForFail = row.source_fail_resaon
       this.dialogVisible = true
     },
-    handleClose(done){
+    handleClose(done) {
       this.viewReason = false
       done()
     }

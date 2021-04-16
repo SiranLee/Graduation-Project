@@ -90,7 +90,7 @@
       :visible.sync="reasonDialogVisible"
       width="30%"
     >
-    {{ reason }}
+      {{ reason }}
     </el-dialog>
   </div>
 </template>
@@ -168,7 +168,7 @@ export default {
         })
       }
     },
-    checkReason(row){
+    checkReason(row) {
       this.reason = ''
       this.reasonDialogVisible = true
       this.reason = row.upload_fail_reason

@@ -223,6 +223,7 @@ export default {
       this.typeValue = newType
       // const $this = this
       let current_course = -1
+      this.currentPage = 1
       if (this.courseValue.length !== 0) {
         current_course = this.courseValue
       }
