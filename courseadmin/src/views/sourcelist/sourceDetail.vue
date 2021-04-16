@@ -116,7 +116,8 @@ export default {
             // 在这里判断资源的可见性
             const $this = this
             result.data.list.forEach(element => {
-              if ($this.$store.state.user.course_nos.indexOf(course_id) >= 0 || !element.read_limit) {
+              // console.log($this.$store.state.user.roles.indexOf('admin'))
+              if ($this.$store.state.user.roles.indexOf('admin') != -1 || $this.$store.state.user.roles.indexOf('teacher') != -1 || $this.$store.state.user.course_nos.indexOf(course_id) >= 0 || !element.read_limit) {
                 $this.sourceList.push(element)
               }
             })

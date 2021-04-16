@@ -414,48 +414,65 @@ def up_source(request):
 def get_source(request):
     course_id = request.GET.get('course_id')
     # print(course_id)
-    page = request.GET.get('page')
+    current_page = int(request.GET.get('page'))
     # print(page)
-    limit = int(request.GET.get('limit'))
+    page_size = int(request.GET.get('limit'))
     # print(limit)
     course = Course.courseManager.filter(no=course_id)[0]
     # print(course)
     sources = course.file_set.all()
     # print(sources)
-    slen = len(sources)
-    if int(page)*int(limit) < slen:
-        sources = sources[(int(page) - 1) * limit:(int(page) - 1) * limit + limit]
-    if int(page)*int(limit) - slen < limit and int(page)*int(limit) > slen:
-        sources = sources[(int(page)-1)*limit:slen - (int(page)-2)*limit]
-    if int(page)*int(limit) - slen > limit:
-        return HttpResponse(json.dumps({
-            'code': 20000,
-            'data': {
-                'listTotal': 0,
-                'list': [],
-            }
-        }))
-    list = []
-    count = len(sources)
-    for item in sources:
-        dic = {
-            'upload_date': str(item.time).split()[0],
-            'upload_type': item.sno.sname,
-            'upload_title': item.title,
-            'upload_intro': item.describe,
-            'upload_filename': item.filename,
-            'upload_filelink': item.url,
-            'upload_id': item.id,
-            'read_limit': item.not_available2all
-        }
-        list.append(dic)
+    totalCount = len(sources)
+    result = []
+    # if int(page)*int(limit) < slen:
+    #     sources = sources[(int(page) - 1) * limit:(int(page) - 1) * limit + limit]
+    # if int(page)*int(limit) - slen < limit and int(page)*int(limit) > slen:
+    #     sources = sources[(int(page)-1)*limit:slen - (int(page)-2)*limit]
+    # if int(page)*int(limit) - slen > limit:
+    #     return HttpResponse(json.dumps({
+    #         'code': 20000,
+    #         'data': {
+    #             'listTotal': 0,
+    #             'list': [],
+    #         }
+    #     }))
+    
+    # count = len(sources)
+    split_page(sources, current_page, page_size, totalCount, result)
+
     return HttpResponse(json.dumps({
         'code': 20000,
         'data': {
-            'listTotal':slen,
-            'list': list,
+            'listTotal':totalCount,
+            'list': result,
         }
     }))
+
+def split_page(sources, current_page, page_size, totalCount, result):
+    start_index = (current_page - 1) * page_size + 1
+    if start_index - 1 + page_size >= totalCount:
+        for source in sources[start_index-1:totalCount]:
+            # 此时不足一页或者刚好一页
+            result.append(create_source_dic(source))
+    else:
+        #此时超出一页,只获取一页的数据
+        for source in sources[start_index-1:start_index+page_size-1]:
+            result.append(create_source_dic(source))
+            
+def create_source_dic(item):
+    dic = {
+        'upload_date': str(item.time).split()[0],
+        'upload_type': item.sno.sname,
+        'upload_title': item.title,
+        'upload_intro': item.describe,
+        'upload_filename': item.filename,
+        'upload_filelink': item.url,
+        'upload_id': item.id,
+        'read_limit': item.not_available2all
+    }
+    return dic
+
+
 
 def del_source(request):
     source_id = request.GET.get('source_id')

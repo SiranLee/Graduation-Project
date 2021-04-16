@@ -38,7 +38,7 @@ export default {
     return {
       course_id: '',
       pagination: {
-        pageSize: pageConfig.pageSize,
+        pageSize: 8,
         stagingCurPage: 1,
         currentPage: 1,
         taskCurPage: 1,

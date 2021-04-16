@@ -139,24 +139,25 @@
             v-if="scope.row.source_status === 1"
             @click="failPass(scope.row.source_id)"
           >打 回</el-button>
-          <el-button
-            :disabled="scope.row.source_status===2"
-            type="success"
-            size="small"
-            @click="sourcePass(scope.row.source_id)"
-          >通 过</el-button>
-          <el-button
-            v-if="scope.row.source_status === 2"
-            type="danger"
-            size="small"
-            @click="deletePassStaging(scope.row)"
-          >删除此记录</el-button>
           <el-button 
             v-if="scope.row.source_status === 3"
             type="info"
             size="small"
             @click="showFailReason(scope.row)"
           >查 看 原 因</el-button>
+          <el-button
+            v-if="scope.row.source_status === 2"
+            type="danger"
+            size="small"
+            @click="deletePassStaging(scope.row)"
+          >删除此记录</el-button>
+          <el-button
+            :loading="scope.row.passLoading"
+            :disabled="scope.row.source_status===2"
+            type="success"
+            size="small"
+            @click="sourcePass(scope.row)"
+          >通 过</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -241,6 +242,10 @@ export default {
     sourceTotal: {
       type: Number,
       default: 0
+    },
+    passLoading:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -251,7 +256,7 @@ export default {
       reasonForFail: '',
       sourceDes: '',
       currentSourceId: '',
-      viewReason: false,
+      viewReason: false
     }
   },
   mounted() {
@@ -315,10 +320,11 @@ export default {
       // 资源未通过提交错误信息
       this.$emit('statusChange', {isFail: true, reasonForFail:this.reasonForFail, staging_id:this.currentSourceId})
     },
-    sourcePass(sourceId) {
+    sourcePass(row) {
       // 资源通过
-      this.currentSourceId = sourceId
-      this.$emit('statusChange', {isFail: false, reasonForFail: this.reasonForFail, staging_id:this.currentSourceId})
+      this.currentSourceId = row.source_id
+
+      this.$emit('statusChange', {isFail: false, reasonForFail: this.reasonForFail, staging_id:this.currentSourceId, row})
     },
     browseSourceDes(row) {
       this.sourceDesDialogVisible = true

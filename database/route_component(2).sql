@@ -1,0 +1,16 @@
+INSERT INTO `route_component` VALUES (1, 'computer', '@/views/sourcelist/index');
+INSERT INTO `route_component` VALUES (2, 'infomanage', '@/views/sourcelist/index');
+INSERT INTO `route_component` VALUES (3, 'market', '@/views/sourcelist/index');
+INSERT INTO `route_component` VALUES (4, 'publicmanage', '@/views/sourcelist/index');
+INSERT INTO `route_component` VALUES (5, 'SourceDetail', '@/views/sourcelist/sourceDetail');
+INSERT INTO `route_component` VALUES (6, 'UploadTask', '@/views/stuTask/uploadTask');
+INSERT INTO `route_component` VALUES (7, 'TaskGlimpse', '@/views/stuTask/taskGlimpse');
+INSERT INTO `route_component` VALUES (8, 'CourseManage', '@/views/coursemanage/index');
+INSERT INTO `route_component` VALUES (9, 'Detail', '@/views/coursemanage/coursedetail');
+INSERT INTO `route_component` VALUES (10, 'Create', '@/views/coursemanage/createcourse');
+INSERT INTO `route_component` VALUES (11, 'CheckTask', '@/views/coursemanage/checkTask');
+INSERT INTO `route_component` VALUES (12, 'StudensManage', '@/views/studentmanage/index');
+INSERT INTO `route_component` VALUES (13, 'Teachers', '@/views/admin/Teacher/index');
+INSERT INTO `route_component` VALUES (14, 'DataStatics', '@/views/admin/dataStatics');
+INSERT INTO `route_component` VALUES (15, 'dataBackup', '@/views/admin/dataBackup');
+INSERT INTO `route_component` VALUES (16, 'DisciplineManagement', '@/views/admin/disciplineManagement');

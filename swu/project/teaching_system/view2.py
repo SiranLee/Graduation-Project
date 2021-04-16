@@ -1228,7 +1228,7 @@ def change_staging_status(request):
         dest_path = os.path.join(os.path.join(settings.MEDIA_ROOT, 'source'), staging_source.filename)
         shutil.move(origin_path, dest_path)
         # 向File模型中添加对应项目 
-        source_file = File.fileManager.createFile(staging_source.fileDes, 
+        source_file = File.fileManager.createFileFromStaging(staging_source.fileDes, 
         r'/upfile/source/'+staging_source.filename, staging_source.title, staging_source.filename, 
         0, staging_source.dno.dno, staging_source.not_available2all, staging_source.tno, 
         staging_source.sno, staging_source.cno, staging_source.up_time)

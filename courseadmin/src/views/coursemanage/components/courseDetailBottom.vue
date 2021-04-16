@@ -78,7 +78,6 @@ export default {
       this.$emit('pageChange', page)
     },
     checkPageChange(page) {
-      console.log('******************')
       this.$emit('checkPageChanged', page)
     },
     renewList() {

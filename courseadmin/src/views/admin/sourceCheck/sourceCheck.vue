@@ -73,7 +73,7 @@ export default {
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该专业下上传的待审核的资源
       const stagingSources = await this.$store.dispatch('admin/getStagingFileUnderMajor', { major_id: this.majorValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      stagingSources.data.sources.forEach(item => item.previewLoading = false)
+      stagingSources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
       this.tableData = stagingSources.data.sources
       this.stagingFileTotal = stagingSources.data.total
       // 请求该专业下的课程
@@ -92,7 +92,7 @@ export default {
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该课程下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourcesUnderCourse', { course_id: this.courseValue, current_type: current_type, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => item.previewLoading = false)
+      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -104,7 +104,7 @@ export default {
       const current_status = this.statusValue.length === 0 ? '-1' : this.statusValue
       // 请求该类型下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourceUnderType', { major_id: this.majorValue, course_id: current_course, current_type: this.typeValue, current_status: current_status, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => item.previewLoading = false)
+      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -116,7 +116,7 @@ export default {
       const current_course = this.courseValue.length === 0 ? '-1' : this.courseValue
       // 请求该状态下的资源
       const sources = await this.$store.dispatch('admin/getStagingSourceUnderStatus', { major_id: this.majorValue, course_id: current_course, current_type: current_type, current_status: this.statusValue, current_page: this.currentPage, page_size: this.pageSize })
-      sources.data.sources.forEach(item => item.previewLoading = false)
+      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -156,7 +156,7 @@ export default {
         default:
           break
       }
-      sources.data.sources.forEach(item => item.previewLoading = false)
+      sources.data.sources.forEach(item => {item.previewLoading = false; item.passLoading=false})
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
@@ -171,11 +171,13 @@ export default {
       this.tableData.splice(0, this.tableData.length)
     },
     // 状态改变
-    async statusChanged({ isFail, reasonForFail, staging_id}){
+    async statusChanged({ isFail, reasonForFail, staging_id, row}){
+      if(!isFail) row.passLoading = true
       const responce = await this.$store.dispatch('admin/changeStagingStatus', {isFail, reasonForFail, staging_id})
       if(responce.data.message==='ok'){
         // 刷新
         this.paginationChanged()
+        row.passLoading = false
         this.$message({
           message: '提交成功',
           type: 'success'
