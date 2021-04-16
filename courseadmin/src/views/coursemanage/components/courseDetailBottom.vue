@@ -9,7 +9,7 @@
           <el-tab-pane label="待审核资源">
             <course-uploaded :not-check="false" :source-list="stagingList" :total="stagingTotal" @deleteResource="deleteRes" @checkPageChange="checkPageChange" />
           </el-tab-pane>
-          <el-tab-pane label="已审核资源">
+          <el-tab-pane label="审核通过资源">
             <course-uploaded :source-list="sourceList" :total="total" @deleteResource="deleteRes" @pageChange="pagechange" />
           </el-tab-pane>
           <el-tab-pane label="发布任务">

@@ -149,7 +149,7 @@ class File(models.Model):
 
 # 待审核资源
 class StagingFileManager(models.Manager):
-    def createStagingFile(self, url, title, filename, fileDes, fileStatus, not_available2all, cno, tno, sno, dno, vtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())), isDelete=False):
+    def createStagingFile(self, url, title, filename, fileDes, fileStatus, not_available2all, failReason, cno, tno, sno, dno, vtime=time.strftime("%Y-%m-%d %H:%M:%S",time.localtime(time.time())), isDelete=False):
         stagingfile = self.model()
         stagingfile.up_time = vtime
         stagingfile.url = url
@@ -159,6 +159,7 @@ class StagingFileManager(models.Manager):
         stagingfile.fileDes = fileDes
         stagingfile.fileStatus = fileStatus
         stagingfile.not_available2all = not_available2all
+        stu.failReason = failReason
         stagingfile.cno = cno
         stagingfile.sno = sno
         stagingfile.tno = tno
@@ -176,6 +177,7 @@ class StagingFile(models.Model):
     # 0: 未审核; 1: 审核中; 2: 审核通过; 3: 审核未通过
     fileStatus = models.SmallIntegerField()
     not_available2all = models.BooleanField(default=False)
+    failReason = models.TextField()
     
     cno = models.ForeignKey('Course', on_delete=models.CASCADE)
     sno = models.ForeignKey('Source', on_delete=models.CASCADE)

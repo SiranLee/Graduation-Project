@@ -94,7 +94,7 @@
           <el-tag
             v-if="scope.row.source_status == 3"
             type="danger"
-          >通过</el-tag>
+          >未通过</el-tag>
         </template>
       </el-table-column>
       <el-table-column
@@ -123,6 +123,7 @@
       <el-table-column v-if="isCheck" align="center" label="资源预览">
         <template slot-scope="scope">
           <el-button
+            v-if="scope.row.source_status === 1 || scope.row.source_status === 3"
             type="primary"
             size="small"
             :loading="scope.row.previewLoading"
@@ -135,6 +136,7 @@
           <el-button
             type="danger"
             size="small"
+            v-if="scope.row.source_status === 1"
             @click="failPass(scope.row.source_id)"
           >打 回</el-button>
           <el-button
@@ -142,6 +144,18 @@
             size="small"
             @click="sourcePass(scope.row.source_id)"
           >通 过</el-button>
+          <el-button
+            v-if="scope.row.source_status === 2"
+            type="danger"
+            size="small"
+            @click="deletePassStaging(scope.row)"
+          ></el-button>
+          <el-button 
+            v-if="scope.row.source_status === 3"
+            type="info"
+            size="small"
+            @click="showFailReason(scope.row)"
+          >查 看 原 因</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -150,11 +164,12 @@
       v-if="isCheck"
       title="打回原因"
       :visible.sync="dialogVisible"
+      :before-close="handleClose"
       width="50%"
     >
-      <el-input v-model="reasonForFail" placeholder="请填写打回原因" />
+      <el-input :disabled="viewReason" v-model="reasonForFail" placeholder="请填写打回原因" />
       <span slot="footer" class="dialog-footer">
-        <el-button type="success" @click="submitReason">提 交</el-button>
+        <el-button type="success" @click="submitReason" :disabled="reasonForFail.length === 0 || viewReason">提 交</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -234,7 +249,8 @@ export default {
       dialogVisible: false,
       reasonForFail: '',
       sourceDes: '',
-      currentSourceId: ''
+      currentSourceId: '',
+      viewReason: false,
     }
   },
   mounted() {
@@ -290,19 +306,32 @@ export default {
         })
     },
     failPass(sourceId) {
+      this.reasonForFail = ''
       this.dialogVisible = true
       this.currentSourceId = sourceId
     },
     submitReason() {
       // 资源未通过提交错误信息
+      this.$emit('statusChange', {isFail: true, reasonForFail:this.reasonForFail, staging_id:this.currentSourceId})
     },
     sourcePass(sourceId) {
       // 资源通过
       this.currentSourceId = sourceId
+      this.$emit('statusChange', {isFail: false, reasonForFail: this.reasonForFail, staging_id:this.currentSourceId})
     },
     browseSourceDes(row) {
       this.sourceDesDialogVisible = true
       this.sourceDes = row.source_des
+    },
+    deletePassStaging(row){},
+    showFailReason(row){
+      this.viewReason = true
+      this.reasonForFail = row.source_fail_resaon
+      this.dialogVisible = true
+    },
+    handleClose(done){
+      this.viewReason = false
+      done()
     }
   }
 }

@@ -21,6 +21,7 @@
       @typeValueChange="typeValueChanged"
       @statusValueChange="statusValueChanged"
       @clearSelectParams="clearSelectedParams"
+      @statusChange="statusChanged"
     />
   </div>
 </template>
@@ -95,6 +96,7 @@ export default {
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
+    // 类型改变
     async typeValueChanged(newType) {
       this.typeValue = newType
       this.selectChangePointer = 'type'
@@ -158,7 +160,6 @@ export default {
       this.tableData = sources.data.sources
       this.stagingFileTotal = sources.data.total
     },
-    // 类型改变
     // 清理参数
     clearSelectedParams() {
       this.majorValue = ''
@@ -168,6 +169,18 @@ export default {
       this.typeOptions.splice(0, this.typeOptions.length)
       this.statusOptions.splice(0, this.statusOptions.length)
       this.tableData.splice(0, this.tableData.length)
+    },
+    // 状态改变
+    async statusChanged({ isFail, reasonForFail, staging_id}){
+      const responce = await this.$store.dispatch('admin/changeStagingStatus', {isFail, reasonForFail, staging_id})
+      if(responce.data.message==='ok'){
+        // 刷新
+        this.paginationChanged()
+        this.$message({
+          message: '提交成功',
+          type: 'success'
+        })
+      }
     }
   }
 }

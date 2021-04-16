@@ -30,7 +30,8 @@
   previewStagingSource,
   getStagingSourcesUnderCourse,
   getStagingSourceUnderType,
-  getStagingSourceUnderStatus } from '@/api/admin'
+  getStagingSourceUnderStatus,
+  changeStagingStatus } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -252,6 +253,13 @@ const actions = {
   },
   async getStagingSourceUnderStatus({ commit }, data) {
     const result = await getStagingSourceUnderStatus(data)
+    if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async changeStagingStatus({ commit }, data){
+    const result = await changeStagingStatus(data)
     if (result) {
       return result
     }

@@ -95,6 +95,7 @@ urlpatterns = [
     re_path(r'^get_staging_sources_under_course/$', view2.get_staging_sources_under_course, name="get_staging_sources_under_course"),
     re_path(r'^get_staging_source_under_type/$', view2.get_staging_source_under_type, name="get_staging_source_under_type"),
     re_path(r'^get_staging_source_under_status/$', view2.get_staging_source_under_status, name="get_staging_source_under_status"),
+    re_path(r'^change_staging_status/$', view2.change_staging_status, name="change_staging_status"),
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),
     re_path(r'^getImg/$', views.getImg, name='getImg'),

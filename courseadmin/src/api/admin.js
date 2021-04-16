@@ -249,3 +249,11 @@ export function getStagingSourceUnderStatus(data) {
     params: data
   })
 }
+
+export function changeStagingStatus(data){
+  return request({
+    url: '/change_staging_status/',
+    method: 'get',
+    params: data
+  })
+}

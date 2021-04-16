@@ -30,13 +30,11 @@
           <span>{{ scope.row.upload_filename }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="!notCheck" align="center" label="资源状态">
+      <el-table-column v-if="!notCheck" align="center" label="资源状态" width="150">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.upload_status===1" type="warning">审核中</el-tag>
           <el-tag v-if="scope.row.upload_status===3" type="danger">未通过</el-tag>
-          <div>
-            <el-button v-if="scope.row.upload_status===3" type="info">查看原因</el-button>
-          </div>
+          <el-button v-if="scope.row.upload_status===3" size="mini" @click="checkReason(scope.row)">原因</el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="!notCheck" align="center" label="资源可见性">
@@ -87,6 +85,13 @@
     >
       <div class="sourceIntro" v-html="sourceEx" />
     </el-dialog>
+    <el-dialog
+      title="未通过原因"
+      :visible.sync="reasonDialogVisible"
+      width="30%"
+    >
+    {{ reason }}
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -118,7 +123,9 @@ export default {
   data() {
     return {
       dialogVisible: false,
-      sourceEx: ''
+      sourceEx: '',
+      reasonDialogVisible: false,
+      reason: ''
     }
   },
   computed: {
@@ -160,6 +167,11 @@ export default {
           type: 'success'
         })
       }
+    },
+    checkReason(row){
+      this.reason = ''
+      this.reasonDialogVisible = true
+      this.reason = row.upload_fail_reason
     }
   }
 }
