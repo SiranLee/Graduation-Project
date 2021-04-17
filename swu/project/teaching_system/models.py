@@ -175,7 +175,7 @@ class StagingFileManager(models.Manager):
         stagingfile.fileDes = fileDes
         stagingfile.fileStatus = fileStatus
         stagingfile.not_available2all = not_available2all
-        stu.failReason = failReason
+        stagingfile.failReason = failReason
         stagingfile.cno = cno
         stagingfile.sno = sno
         stagingfile.tno = tno

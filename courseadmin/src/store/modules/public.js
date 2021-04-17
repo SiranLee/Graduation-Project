@@ -11,7 +11,8 @@
   modifyPwdSelf,
   searchByKeyWord,
   getAllMajors,
-  getCourseInfo } from '@/api/public'
+  getCourseInfo,
+  addDownLoadTimes } from '@/api/public'
 
 const actions = {
   async getAllCourse({ commit }, data) {
@@ -101,6 +102,13 @@ const actions = {
   async getCourseInfo({ commit }, data) {
     const result = await getCourseInfo(data)
     if (result) {
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async addDownLoadTimes({ commit }, data){
+    const result = await addDownLoadTimes(data)
+    if(result){
       return result
     }
     return Promise.reject(result)

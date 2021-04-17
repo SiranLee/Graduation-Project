@@ -98,6 +98,7 @@ urlpatterns = [
     re_path(r'^change_staging_status/$', view2.change_staging_status, name="change_staging_status"),
     re_path(r'^del_pass_staging/$', view2.del_pass_staging, name="del_pass_staging"),
     re_path(r'^search_source_with_value/$', view2.search_source_with_value, name="search_source_with_value"),
+    re_path(r'^add_download_times/$', view2.add_download_times, name="add_download_times"),
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),
     re_path(r'^getImg/$', views.getImg, name='getImg'),

@@ -141,7 +141,7 @@ export default {
         },
         visualMap: {
           min: 0,
-          max: 40,
+          max: 15,
           type: 'piecewise',
           orient: 'horizontal',
           left: 'center',

@@ -32,9 +32,9 @@
       </el-table-column>
       <el-table-column v-if="!notCheck" align="center" label="资源状态" width="150">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.upload_status===1" type="warning">审核中</el-tag>
-          <el-tag v-if="scope.row.upload_status===3" type="danger">未通过</el-tag>
-          <el-button v-if="scope.row.upload_status===3" size="mini" @click="checkReason(scope.row)">原因</el-button>
+          <el-tag v-if="scope.row.upload_status==='1'" type="warning">审核中</el-tag>
+          <el-tag v-if="scope.row.upload_status==='3'" type="danger">未通过</el-tag>
+          <el-button v-if="scope.row.upload_status==='3'" size="mini" @click="checkReason(scope.row)">原因</el-button>
         </template>
       </el-table-column>
       <el-table-column v-if="!notCheck" align="center" label="资源可见性">
@@ -57,12 +57,13 @@
           <el-button
             type="primary"
             size="small"
-            @click="downloadFile(link + scope.row.upload_filelink)"
+            @click="downloadFile(scope.row)"
           >下载</el-button>
           <el-button
             v-if="deletable"
             type="danger"
             size="small"
+            :disabled="scope.row.upload_status==='1' || scope.row.upload_status==='3'"
             @click="remove(scope.row.upload_id)"
           >删除</el-button>
           <el-popover
@@ -156,8 +157,13 @@ export default {
       this.dialogVisible = true
       this.sourceEx = row.upload_intro
     },
-    downloadFile(url) {
-      window.open(url)
+    downloadFile(row) {
+      this.$store.dispatch('publicOpen/addDownLoadTimes', {source_id: row.upload_id})
+      .then(res => {
+        window.open(this.link + row.upload_filelink)
+      })
+      .catch(err => {return})
+      // link + scope.row.upload_filelink
     },
     async switchValueChanged(row) {
       const { data } = await this.$store.dispatch('teachers/modifySourceReadLimit', { source_id: row.upload_id, read_limit: row.read_limit })

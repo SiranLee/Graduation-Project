@@ -368,7 +368,8 @@ def up_source(request):
             for info in file1.chunks():
                 fp.write(info)
         # print(os.path.join('/upfile/source', file1.name))
-        f = StagingFile.stagingFileManager.createStagingFile(r'/upfile/stagingSource/'+file1.name, request.POST.get('title'), file1.name, describe, 1, not_available_2_all, course, teacher, source, department)
+        #f = StagingFile.stagingFileManager.createStagingFile(r'/upfile/stagingSource/'+file1.name, request.POST.get('title'), file1.name, describe, 1, not_available_2_all, course, teacher, source, department)
+        f = StagingFile.stagingFileManager.createStagingFile(r'/upfile/stagingSource/'+file1.name, request.POST.get('title'), file1.name, describe, 1, not_available_2_all, ' ', course, teacher, source, department)
         # f = File.fileManager.createFile(describe, r'/upfile/source/' + file1.name, request.POST.get('title'), file1.name, 0, department.dno, not_available_2_all, teacher, source, course)
         f.save()
         fileList.append(f)

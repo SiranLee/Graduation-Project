@@ -87,15 +87,15 @@
       >
         <template slot-scope="scope">
           <el-tag
-            v-if="scope.row.source_status == 1"
+            v-if="scope.row.source_status == '1'"
             type="info"
           >待审核</el-tag>
           <el-tag
-            v-if="scope.row.source_status == 2"
+            v-if="scope.row.source_status == '2'"
             type="success"
           >通过</el-tag>
           <el-tag
-            v-if="scope.row.source_status == 3"
+            v-if="scope.row.source_status == '3'"
             type="danger"
           >未通过</el-tag>
         </template>
@@ -126,7 +126,7 @@
       <el-table-column v-if="isCheck" align="center" label="资源预览">
         <template slot-scope="scope">
           <el-button
-            :disabled="scope.row.source_status === 2"
+            :disabled="scope.row.source_status === '2'"
             type="primary"
             size="small"
             :loading="scope.row.previewLoading"
@@ -137,26 +137,26 @@
       <el-table-column v-if="isCheck" align="center" label="操作" width="270">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.source_status === 1"
+            v-if="scope.row.source_status === '1'"
             type="danger"
             size="small"
             @click="failPass(scope.row.source_id)"
           >打 回</el-button>
           <el-button
-            v-if="scope.row.source_status === 3"
+            v-if="scope.row.source_status === '3'"
             type="info"
             size="small"
             @click="showFailReason(scope.row)"
-          >查 看 原 因</el-button>
+          >原 因</el-button>
           <el-button
-            v-if="scope.row.source_status === 2"
+            v-if="scope.row.source_status === '2' || scope.row.source_status === '3'"
             type="danger"
             size="small"
             @click="deletePassStaging(scope.row)"
-          >删除此记录</el-button>
+          >删除记录</el-button>
           <el-button
             :loading="scope.row.passLoading"
-            :disabled="scope.row.source_status===2"
+            :disabled="scope.row.source_status==='2'"
             type="success"
             size="small"
             @click="sourcePass(scope.row)"

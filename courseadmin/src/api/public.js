@@ -105,3 +105,11 @@ export function getCourseInfo(data) {
     params: data
   })
 }
+
+export function addDownLoadTimes(data){
+  return request({
+    url: '/add_download_times/',
+    method: 'post',
+    data
+  })
+}

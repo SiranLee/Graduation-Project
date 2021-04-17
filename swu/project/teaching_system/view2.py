@@ -839,6 +839,20 @@ def del_displine(request):
     #         }
     #     }))
 
+def add_download_times(request):
+    target_source_id = json.loads(request.body)['source_id']
+
+    target_source = File.fileManager.get(pk=target_source_id)
+    target_source.download_times = target_source.download_times + 1
+    target_source.save()
+
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'message': 'ok'
+        }
+    }))
+
 def modify_read_limit(request):
     source_id = json.loads(request.body)['source_id']
     read_limit = json.loads(request.body)['read_limit']

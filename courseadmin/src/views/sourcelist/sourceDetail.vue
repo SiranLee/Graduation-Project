@@ -178,7 +178,6 @@ export default {
       }
     },
     search() {
-      console.log(this.searchValue)
       const course_id = this.$route.params.courseid
       this.$store.dispatch('publicOpen/searchSource', { key_word: this.searchValue, course_id: course_id, page: 1, limit: this.limit })
         .then(res => {
