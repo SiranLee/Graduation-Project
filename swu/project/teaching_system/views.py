@@ -4,7 +4,7 @@ import os
 from django.conf import settings
 from django.utils.encoding import escape_uri_path
 import cv2
-from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, StudentWork, StudentRoutesMap, TeacherRoutesMap, Routes, StagingFile
+from .models import Teacher, Student, Department, ImageStore, Course, Source, File, StudentStore, Mclass, StudentImage, TeacherImage, Admin, AdminImage, TeacherStore, StudentTime, StudentTimeNow, StudentWork, StudentRoutesMap, TeacherRoutesMap, Routes, StagingFile, StagingConvertPDF
 import json
 import base64
 
@@ -1274,7 +1274,6 @@ def delete_course_cascade(course):
             os.remove(filePath)
         except Exception as e:
             print(e)
-            
     
     # 删除学生以及删除学生的路由
     students = Student.studentManager.filter(isDelete=False, mclass=mclass)
@@ -1399,6 +1398,16 @@ def admin_delteacher(request):
         courses = Course.courseManager.filter(tno=teacher)
         for course in courses:
             delete_course_cascade(course)
+        staging_files = StagingFile.stagingFileManager.filter(tno=teacher)
+        for staging_file in staging_files:
+            staging_convert_file = StagingConvertPDF.stagingConvertPDFManager.get(staging_pdf_name=staging_file.filename)
+            staging_convert_file_path = os.path.join(settings.MEDIA_ROOT, staging_convert_file.staging_pdf_path)
+            staging_file_path = os.path.join(settings.MEDIA_ROOT, staging_file.url)
+            os.remove(staging_convert_file_path)
+            os.remove(staging_file_path)
+            staging_convert_file.delete()
+            staging_file.delete()
+
     except Exception as e:
         print(e)
         

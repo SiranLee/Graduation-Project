@@ -269,17 +269,18 @@ export default {
       this.tableData = data_sources.data.sources
       this.sourceTotal = data_sources.data.total
       // 配置图表数据
-      this.processChartData(data_sources.data.heat)
+      this.processChartData(data_sources.data.heat, data_sources.data.pieData)
       this.drawPie()
       this.drawCalenderHeat()
     },
     // 配置图表数据
-    processChartData(heatData) {
+    processChartData(heatData, pieData) {
       const $this = this
-      this.tableData.forEach(item => {
-        for (let i = 0; i < $this.pieData.length; i++) {
-          if (item.source_type === $this.pieData[i].name) {
-            $this.pieData[i].value++
+      pieData.forEach(item => {
+        for (let i = 0; i < pieData.length; i++) {
+          if(item.name===$this.pieData[i].name){
+            $this.pieData[i].value = item.value
+            break;
           }
         }
       })

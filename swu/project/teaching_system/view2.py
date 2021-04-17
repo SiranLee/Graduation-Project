@@ -914,6 +914,7 @@ def get_sourse_under_major(request):
     current_page = int(request.GET.get('current_page'))
     page_size = int(request.GET.get('page_size'))
     dep = Department.departmentManage.get(pk=major_id).dno   
+    all_types = Source.sourceManager.all()[0:3]
     if source_type == '-1':
         sources = File.fileManager.filter(dno=dep)
     else:
@@ -923,6 +924,16 @@ def get_sourse_under_major(request):
     totalCount = len(sources)
     result = []
     heatMap = []
+    pieData = []
+    for file_type in all_types:
+        dic = {
+            'name': file_type.sname,
+            'value': 0
+        }
+        for source in sources:
+            if source.sno == file_type:
+                dic['value'] = dic['value'] + 1
+        pieData.append(dic)
 
     start_index = (current_page-1) * page_size + 1
     
@@ -942,7 +953,8 @@ def get_sourse_under_major(request):
         'data': {
             'sources': result,
             'total': totalCount,
-            'heat': heatMap
+            'heat': heatMap,
+            'pieData': pieData
         }
     }))
 # 根据课程id来过滤资源
@@ -951,6 +963,7 @@ def get_source_under_course(request):
     source_type = request.GET.get('currentType')
     current_page = int(request.GET.get('currentPage'))
     page_size = int(request.GET.get('pageSize'))
+    all_types = Source.sourceManager.all()[0:3]
     sources = None
     if source_type == '-1':
         sources = File.fileManager.filter(no=course_id)
@@ -961,6 +974,16 @@ def get_source_under_course(request):
     totalCount = len(sources)
     result = []
     heatMap = []
+    pieData = []
+    for file_type in all_types:
+        dic = {
+            'name': file_type.sname,
+            'value': 0
+        }
+        for source in sources:
+            if source.sno == file_type:
+                dic['value'] = dic['value'] + 1
+        pieData.append(dic)
     start_index = start_index = (current_page-1) * page_size + 1
 
     split_page(sources, current_page, page_size, start_index, totalCount, result)
@@ -977,7 +1000,8 @@ def get_source_under_course(request):
         'data':{
             'sources': result,
             'total': totalCount,
-            'heat': heatMap
+            'heat': heatMap,
+            'pieData': pieData
         }
     }))
 
