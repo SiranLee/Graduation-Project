@@ -181,7 +181,7 @@ export function searchTeacherWithNo(data) {
 
 export function getSourceUnderMajor(data) {
   return request({
-    url: '/get_course_under_major/',
+    url: '/get_sourse_under_major/',
     method: 'get',
     params: data
   })
@@ -263,5 +263,13 @@ export function deletePassStaging(data){
     url: '/del_pass_staging/',
     method: 'post',
     data
+  })
+}
+
+export function searchSourceWithValue(data){
+  return request({
+    url: '/search_source_with_value/',
+    methos: 'get',
+    params: data
   })
 }

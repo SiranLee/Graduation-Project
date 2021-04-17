@@ -19,6 +19,8 @@
         @currentPageChange="currentPageChanged"
         @typeValueChange="typeValueChanged"
         @clearSelectParams="clearSelectedParams"
+        @emptyInputSearch="emptyInput"
+        @searchWithValue="searchWithValue"
       />
     </div>
     <div class="chartView">
@@ -256,8 +258,11 @@ export default {
         data_sources = await this.$store.dispatch('admin/getSourceUnderCourse', { course_id: this.courseValue, currentType: currentType, currentPage: this.currentPage, pageSize: this.pageSize })
       } else if (this.courseValue.length === 0 && this.typeValue.length > 0) {
         data_sources = await this.$store.dispatch('admin/sourceTypeChange', { major_id: this.majorValue, course_id: '-1', type: currentType, page_size: this.pageSize, current_page: this.currentPage })
+      }else{
+        data_sources = await this.$store.dispatch('admin/sourceTypeChange', { major_id: this.majorValue, course_id: this.courseValue, type: currentType, page_size: this.pageSize, current_page: this.currentPage })
       }
       this.tableData = data_sources.data.sources
+      this.sourceTotal = data_sources.data.total
     },
     // 将请求下来的资源写到页面上
     wirteTableAndChart(data_sources) {
@@ -292,6 +297,19 @@ export default {
       this.tableData.splice(0, this.tableData.length)
       this.pieData.splice(0, this.pieData.length)
       this.heatChartData.splice(0, this.heatChartData.length)
+    },
+    emptyInput(){
+      this.paginationDataChanged()
+      // this.wirteTableAndChart()
+    },
+    async searchWithValue(val){
+      let current_course = this.courseValue.length === 0?'-1':this.courseValue
+      let current_type = this.typeValue.length === 0?'-1':this.typeValue
+      let current_status = '-1'
+      this.currentPage = 1
+      const data = await this.$store.dispatch('admin/searchSourceWithValue', {value: val, staging: false, current_major: this.majorValue, current_course, current_type, current_status, current_page: this.currentPage, page_size: this.pageSize})
+      this.tableData = data.data.sources
+      this.sourceTotal = data.data.total
     }
   }
 }

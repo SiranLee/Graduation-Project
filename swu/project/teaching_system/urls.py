@@ -85,7 +85,7 @@ urlpatterns = [
     re_path(r'^search_teacher_with_no/$', views.search_teacher_with_no, name="search_teacher_with_no"),
     re_path(r'^search_with_no/$', views.search_with_no, name="search_with_no"),
     re_path(r'^modify_read_limit/$', view2.modify_read_limit, name="modify_read_limit"),
-    re_path(r'^get_course_under_major/$', view2.get_course_under_major, name="get_course_under_major"),
+    re_path(r'^get_sourse_under_major/$', view2.get_sourse_under_major, name="get_sourse_under_major"),
     re_path(r'^get_source_under_course/$', view2.get_source_under_course, name="get_source_under_course"),
     re_path(r'^source_type_change/$', view2.source_type_change, name="source_type_change"),
     re_path(r'^get_staging_types/$', view2.get_staging_types, name="get_staging_types"),
@@ -97,6 +97,7 @@ urlpatterns = [
     re_path(r'^get_staging_source_under_status/$', view2.get_staging_source_under_status, name="get_staging_source_under_status"),
     re_path(r'^change_staging_status/$', view2.change_staging_status, name="change_staging_status"),
     re_path(r'^del_pass_staging/$', view2.del_pass_staging, name="del_pass_staging"),
+    re_path(r'^search_source_with_value/$', view2.search_source_with_value, name="search_source_with_value"),
 
     re_path(r'^teacher_data/$', views.teacher_data, name='teacher_data'),
     re_path(r'^getImg/$', views.getImg, name='getImg'),

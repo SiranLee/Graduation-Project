@@ -866,7 +866,7 @@ def create_source_dic(source, staging=False):
             'source_course': source.cno.name,
             'source_des': source.fileDes,
             'source_link': source.url,
-            'source_status': source.fileStatus,
+            'source_status': str(source.fileStatus),
             'source_not_available2all': source.not_available2all,
             'source_fail_resaon': source.failReason
         }
@@ -894,7 +894,7 @@ def split_page(sources, current_page, page_size, start_index, totalCount, result
     
 
 # 根据专业id来查已上传已审核的资源
-def get_course_under_major(request):
+def get_sourse_under_major(request):
     major_id = request.GET.get('major_id')
     source_type = request.GET.get('currentType')
     current_page = int(request.GET.get('current_page'))
@@ -1122,16 +1122,8 @@ def get_staging_source_under_type(request):
         }
     }))
 
-# 管理员通过资源状态来获取staging资源
-def get_staging_source_under_status(request):
-    major_id = request.GET.get('major_id')
-    course_id = request.GET.get('course_id')
-    current_type = request.GET.get('current_type')
-    current_status = request.GET.get('current_status')
-    current_page = int(request.GET.get('current_page'))
-    page_size = int(request.GET.get('page_size'))
-
-    sources = None
+# 根据资源状态的判断 status已知
+def judge_base_on_status(course_id, current_type, sources, major_id, current_status):
     if course_id == '-1' and current_type == '-1':
         sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status)
     elif course_id == '-1':
@@ -1142,6 +1134,19 @@ def get_staging_source_under_status(request):
     else:
         source_type = Source.sourceManager.get(sno=current_type)
         sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, fileStatus=current_status, cno=course_id, sno=source_type)
+    return sources
+# 管理员通过资源状态来获取staging资源
+def get_staging_source_under_status(request):
+    major_id = request.GET.get('major_id')
+    course_id = request.GET.get('course_id')
+    current_type = request.GET.get('current_type')
+    current_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    sources = None
+    
+    sources = judge_base_on_status(course_id, current_type, sources, major_id, current_status)
 
     totalCount = len(sources)
     start_index = (current_page - 1) * page_size + 1
@@ -1165,7 +1170,7 @@ def create_staging_sources_dic(source):
         'upload_type': source.sno.sname,
         'upload_title': source.title,
         'upload_filename': source.filename,
-        'upload_status': source.fileStatus,
+        'upload_status': str(source.fileStatus),
         'upload_intro': source.fileDes,
         'upload_filelink': source.url,
         'not_available2all': source.not_available2all,
@@ -1264,6 +1269,63 @@ def del_pass_staging(request):
             'message': 'ok'
         }
     }))
+
+# 按照资源标题关键字来搜索资源，包括审核通过资源和staging资源
+def search_source_with_value(request):
+    key_word = request.GET.get('value')
+    is_staging = request.GET.get('staging')
+    major_id = request.GET.get('current_major')
+    current_course = request.GET.get('current_course')
+    current_type = request.GET.get('current_type')
+    current_status = request.GET.get('current_status')
+    current_page = int(request.GET.get('current_page'))
+    page_size = int(request.GET.get('page_size'))
+
+    dep = Department.departmentManage.get(pk=major_id).dno
+    sources = None
+    result = []
+    start_index = (current_page - 1) * page_size + 1
+
+    if is_staging == 'false':
+        # 搜索所有通过的资源
+        is_staging = False
+        if current_course == '-1' and current_type == '-1':
+            sources = File.fileManager.filter(isDelete=False, dno=dep, title__contains=key_word)
+        elif current_course == '-1':
+            source_no = Source.sourceManager.get(sno=current_type)
+            sources = File.fileManager.filter(isDelete=False, dno=dep, sno=source_no, title__contains=key_word)
+        elif current_type == '-1':
+            sources = File.fileManager.filter(isDelete=False, dno=dep, no=current_course, title__contains=key_word)
+        else:
+            source_no = Source.sourceManager.get(sno=current_type)
+            sources = File.fileManager.filter(isDelete=False, dno=dep, no=current_course, sno=source_no, title__contains=key_word)
+    else:
+        is_staging = True
+        if current_status == '-1': # 只考虑course, type
+            if current_course == '-1' and current_type == '-1':
+                sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, title__contains=key_word)
+            elif current_course == '-1':
+                source_type = Source.sourceManager.get(sno=current_type)
+                sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id)
+            elif current_type == '-1':
+                sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, cno=current_course, title__contains=key_word)
+            else:
+                source_type = Source.sourceManager.get(sno=current_type)
+                sources = StagingFile.stagingFileManager.filter(isDelete=False, dno=major_id, cno=current_course, sno=source_type, title__contains=key_word)
+        else: #把status当做已知，考虑course, type
+            sources = judge_base_on_status(current_course, current_type, sources, major_id, current_status)
+            sources = sources.filter(title__contains=key_word)
+    
+    totalCount = len(sources)
+    split_page(sources, current_page, page_size, start_index, totalCount, result, is_staging)
+    return HttpResponse(json.dumps({
+        'code': 20000,
+        'data':{
+            'sources': result,
+            'total': totalCount
+        }
+    }))
+
 
 from .convert2pdf import word2pdf_entrance, excel2pdf_entrance, ppt2pdf_entrance
 # 上传的资源预览

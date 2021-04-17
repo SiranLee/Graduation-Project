@@ -55,6 +55,9 @@
         @click="clearSelectParams"
       >清空所选参数</el-button>
     </div>
+    <div>
+      <search :placeholder="'请输入要搜索的资源标题'" :value.sync="searchValue" @emptyInput="emptyInput" @search="search" />
+    </div>
     <div class="paginationContainer">
       <el-pagination
         :current-page="currentPage"
@@ -184,8 +187,13 @@
   </div>
 </template>
 <script>
-import { registerCoordinateSystem } from 'echarts'
+// import { registerCoordinateSystem } from 'echarts'
+import search from '@/views/sourcelist/components/Search'
+// import Search from '../../sourcelist/components/Search.vue'
 export default {
+  components:{
+    search
+  },
   props: {
     isCheck: {
       type: Boolean,
@@ -256,7 +264,8 @@ export default {
       reasonForFail: '',
       sourceDes: '',
       currentSourceId: '',
-      viewReason: false
+      viewReason: false,
+      searchValue:'',
     }
   },
   mounted() {
@@ -341,15 +350,27 @@ export default {
     handleClose(done) {
       this.viewReason = false
       done()
+    },
+    emptyInput(){
+      if(this.majorValue.length === 0) return this.$message({message:'请先选择一个过滤器', type:'info'})
+      
+      this.$emit('emptyInputSearch')
+    },
+    search(){
+      if(this.majorValue.length === 0) return this.$message({message:'请先选择一个过滤器', type:'info'})
+      if(this.searchValue.length === 0) return 
+      this.$emit('searchWithValue', this.searchValue)
     }
   }
 }
 </script>
 <style scoped>
 .top_choose_bar {
-  margin-bottom: 40px;
+  margin-top: 20px;
+  margin-bottom: 30px;
 }
 .paginationContainer {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  margin-top: 30px;
 }
 </style>

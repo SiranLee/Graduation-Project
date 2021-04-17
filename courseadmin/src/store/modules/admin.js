@@ -32,7 +32,8 @@
   getStagingSourceUnderType,
   getStagingSourceUnderStatus,
   changeStagingStatus,
-  deletePassStaging } from '@/api/admin'
+  deletePassStaging,
+  searchSourceWithValue } from '@/api/admin'
 
 const actions = {
   async getTeachers({ commit }, data) {
@@ -268,6 +269,13 @@ const actions = {
   },
   async deletePassStaging({ commit }, data){
     const result = await deletePassStaging(data)
+    if(result){
+      return result
+    }
+    return Promise.reject(result)
+  },
+  async searchSourceWithValue({ commit }, data){
+    const result = await searchSourceWithValue(data)
     if(result){
       return result
     }
