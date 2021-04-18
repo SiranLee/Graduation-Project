@@ -1771,7 +1771,6 @@ def teacherget_garden(request):
             myclass = myclass[0]
             str = myclass.grade + '|' +  item.dno.dname + '|' + item.dno.dno
             itemset.add(str)
-
     for item2 in itemset:
         dic1 = {
             'label': item2.split('|')[0],
@@ -1796,6 +1795,7 @@ def gettaskbycourse(request):
     course = Course.courseManager.get(no=course_id)
     homeworks = list(course.homework_set.all())
     tasks = []
+    print(homeworks)
     if len(homeworks) > 0:
         for item in homeworks:
             dic = {

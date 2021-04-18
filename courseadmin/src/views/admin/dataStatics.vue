@@ -260,7 +260,7 @@ export default {
 
       this.staticsData.dep_homeworks.forEach(item => {
         worksData.push(item.count)
-        worksIndicator.push({ name: item.dep, max: 30 })
+        worksIndicator.push({ name: item.dep, max: 12 })
       })
       const option = {
         title: {
@@ -428,6 +428,7 @@ export default {
     },
     async valueChange(v) {
       const $this = this
+      this.courseOptions.splice(0, this.courseOptions.length)
       const stackBarData = await this.$store.dispatch('admin/getStackBarData', {
         dep_id: $this.selMajor
       })
@@ -456,19 +457,22 @@ export default {
       this.drawStackBar()
     },
     stackBarSelectChange(v) {
+      const $this = this
       this.task_times.splice(0, this.task_times.length)
-      this.checked_tasks.splice(0, this.task_times.length)
-      this.unchecked_tasks.splice(0, this.task_times.length)
-      this.total_tasks.splice(0, this.task_times.length)
+      this.checked_tasks.splice(0, this.checked_tasks.length)
+      this.unchecked_tasks.splice(0, this.unchecked_tasks.length)
+      this.total_tasks.splice(0, this.total_tasks.length)
+      // this.drawStackBar_2()
       this.$store.dispatch('admin/getHomeworkData', { dep_id: this.selMajor, course_id: this.selCourse })
         .then(res => {
+          console.log(res)
           res.data.checked_data.forEach(item => {
             $this.task_times.push(item.times)
             $this.checked_tasks.push(item.status.checked)
             $this.total_tasks.push(item.status.total)
             $this.unchecked_tasks.push(item.status.unchecked)
           })
-          $this.drawStackBar_2()
+          this.drawStackBar_2()
         })
         .catch(() => {})
     },
@@ -516,7 +520,7 @@ export default {
           {
             name: '已批改',
             type: 'bar',
-            stack: '广告',
+            // stack: '广告',
             emphasis: {
               focus: 'series'
             },
@@ -525,7 +529,7 @@ export default {
           {
             name: '未批改',
             type: 'bar',
-            stack: '广告',
+            // stack: '广告',
             emphasis: {
               focus: 'series'
             },

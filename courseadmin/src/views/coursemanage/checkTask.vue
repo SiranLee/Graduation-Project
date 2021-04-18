@@ -207,7 +207,7 @@ export default {
     // 请求课程
     this.$store.dispatch('teachers/getGrade', { id: this.$store.state.user.id })
       .then(res => {
-        this.optionsGrade = res.data.grades
+        this.optionsGrade = this.uniqueArr(res.data.grades)
         this.optionsMajor = res.data.majors
         this.selGrade = this.optionsGrade[0].value
         this.selMajor = this.optionsMajor[0].value
@@ -244,6 +244,16 @@ export default {
       .catch(() => { return })
   },
   methods: {
+    uniqueArr(arr){
+      let tempArr = []
+      let arrSet = new Set([arr[0].label])
+      for(let i = 1;i<arr.length;i++){
+        arrSet.add(arr[i].label)
+      }
+      let pureArr = Array.from(arrSet)
+      pureArr.forEach(item => {tempArr.push({label: item, value: item})})
+      return tempArr
+    },
     getData(data) {
       this.$store
         .dispatch('teachers/getPDF', data)
@@ -258,24 +268,20 @@ export default {
     },
     Tagchange(v, suffix) {
       // 这里添加代码
+      // console.log('herherher')
       this[`sel${suffix}`] = v
-      this.$store.dispatch('teachers/getTasksByCourse', {
-        course_id: this.selCourse
-      }).then(res => {
-        this.optionsStatus = res.data.status
-        if (suffix === 'Course') {
-          this.selStatus = this.optionsStatus[0].value
-          if (res.data.tasks.length == 0) {
-            this.tableData.splice(0, this.tableData.length)
-            this.optionsTask.splice(0, this.optionsTask.length)
-            this.selTask = ''
-            this.tableLoading = false
-            return
-          } else {
-            this.optionsTask = res.data.tasks
-            this.selTask = this.optionsTask[0].value
-          }
-        }
+      // console.log(this[`sel${suffix}`])
+      this.$store.dispatch('teachers/getShortCourse', { id: this.$store.state.user.id, major: this.selMajor })
+      .then(res => {
+        this.optionsCourse = res.data.courses
+        this.selCourse = this.optionsCourse[0].course_id
+        return this.$store.dispatch('teachers/getTasksByCourse', { course_id: this.selCourse })
+      })
+      .then(res => {
+        this.optionsTask = res.data.tasks
+        // if(suffix === 'Course')
+
+        // this.selTask = this.optionsTask[0].value
         return this.getData({
           id: this.$store.state.user.id,
           grade_id: this.selGrade,

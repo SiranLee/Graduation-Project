@@ -191,7 +191,7 @@
 import search from '@/views/sourcelist/components/Search'
 // import Search from '../../sourcelist/components/Search.vue'
 export default {
-  components:{
+  components: {
     search
   },
   props: {
@@ -265,7 +265,7 @@ export default {
       sourceDes: '',
       currentSourceId: '',
       viewReason: false,
-      searchValue:'',
+      searchValue: ''
     }
   },
   mounted() {
@@ -351,14 +351,14 @@ export default {
       this.viewReason = false
       done()
     },
-    emptyInput(){
-      if(this.majorValue.length === 0) return this.$message({message:'请先选择一个过滤器', type:'info'})
-      
+    emptyInput() {
+      if (this.majorValue.length === 0) return this.$message({ message: '请先选择一个过滤器', type: 'info' })
+
       this.$emit('emptyInputSearch')
     },
-    search(){
-      if(this.majorValue.length === 0) return this.$message({message:'请先选择一个过滤器', type:'info'})
-      if(this.searchValue.length === 0) return 
+    search() {
+      if (this.majorValue.length === 0) return this.$message({ message: '请先选择一个过滤器', type: 'info' })
+      if (this.searchValue.length === 0) return
       this.$emit('searchWithValue', this.searchValue)
     }
   }

@@ -258,7 +258,7 @@ export function changeStagingStatus(data) {
   })
 }
 
-export function deletePassStaging(data){
+export function deletePassStaging(data) {
   return request({
     url: '/del_pass_staging/',
     method: 'post',
@@ -266,7 +266,7 @@ export function deletePassStaging(data){
   })
 }
 
-export function searchSourceWithValue(data){
+export function searchSourceWithValue(data) {
   return request({
     url: '/search_source_with_value/',
     methos: 'get',

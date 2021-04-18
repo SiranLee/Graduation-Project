@@ -36,10 +36,10 @@ def student_upfile_homework(request):
     # major: '专业id'
     major = request.POST.get('major')
     # print(major)
-    department = Department.departmentManage.get(dno=major)
     # course: '课程id'
     course_id = request.POST.get('course')
     course = Course.courseManager.get(no=course_id)
+    department = course.dno
     # '作业id'
     task = request.POST.get('task')
     work = Homework.homeworkManager.get(pk=int(task))

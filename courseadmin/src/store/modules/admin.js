@@ -267,16 +267,16 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async deletePassStaging({ commit }, data){
+  async deletePassStaging({ commit }, data) {
     const result = await deletePassStaging(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)
   },
-  async searchSourceWithValue({ commit }, data){
+  async searchSourceWithValue({ commit }, data) {
     const result = await searchSourceWithValue(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

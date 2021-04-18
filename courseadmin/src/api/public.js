@@ -106,7 +106,7 @@ export function getCourseInfo(data) {
   })
 }
 
-export function addDownLoadTimes(data){
+export function addDownLoadTimes(data) {
   return request({
     url: '/add_download_times/',
     method: 'post',

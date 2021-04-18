@@ -258,7 +258,7 @@ export default {
         data_sources = await this.$store.dispatch('admin/getSourceUnderCourse', { course_id: this.courseValue, currentType: currentType, currentPage: this.currentPage, pageSize: this.pageSize })
       } else if (this.courseValue.length === 0 && this.typeValue.length > 0) {
         data_sources = await this.$store.dispatch('admin/sourceTypeChange', { major_id: this.majorValue, course_id: '-1', type: currentType, page_size: this.pageSize, current_page: this.currentPage })
-      }else{
+      } else {
         data_sources = await this.$store.dispatch('admin/sourceTypeChange', { major_id: this.majorValue, course_id: this.courseValue, type: currentType, page_size: this.pageSize, current_page: this.currentPage })
       }
       this.tableData = data_sources.data.sources
@@ -278,9 +278,9 @@ export default {
       const $this = this
       pieData.forEach(item => {
         for (let i = 0; i < pieData.length; i++) {
-          if(item.name===$this.pieData[i].name){
+          if (item.name === $this.pieData[i].name) {
             $this.pieData[i].value = item.value
-            break;
+            break
           }
         }
       })
@@ -299,16 +299,16 @@ export default {
       this.pieData.splice(0, this.pieData.length)
       this.heatChartData.splice(0, this.heatChartData.length)
     },
-    emptyInput(){
+    emptyInput() {
       this.paginationDataChanged()
       // this.wirteTableAndChart()
     },
-    async searchWithValue(val){
-      let current_course = this.courseValue.length === 0?'-1':this.courseValue
-      let current_type = this.typeValue.length === 0?'-1':this.typeValue
-      let current_status = '-1'
+    async searchWithValue(val) {
+      const current_course = this.courseValue.length === 0 ? '-1' : this.courseValue
+      const current_type = this.typeValue.length === 0 ? '-1' : this.typeValue
+      const current_status = '-1'
       this.currentPage = 1
-      const data = await this.$store.dispatch('admin/searchSourceWithValue', {value: val, staging: false, current_major: this.majorValue, current_course, current_type, current_status, current_page: this.currentPage, page_size: this.pageSize})
+      const data = await this.$store.dispatch('admin/searchSourceWithValue', { value: val, staging: false, current_major: this.majorValue, current_course, current_type, current_status, current_page: this.currentPage, page_size: this.pageSize })
       this.tableData = data.data.sources
       this.sourceTotal = data.data.total
     }

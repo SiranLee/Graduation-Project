@@ -106,9 +106,9 @@ const actions = {
     }
     return Promise.reject(result)
   },
-  async addDownLoadTimes({ commit }, data){
+  async addDownLoadTimes({ commit }, data) {
     const result = await addDownLoadTimes(data)
-    if(result){
+    if (result) {
       return result
     }
     return Promise.reject(result)

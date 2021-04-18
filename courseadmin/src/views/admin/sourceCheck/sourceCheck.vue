@@ -191,10 +191,9 @@ export default {
         })
       }
     },
-    async deletePassStaging(row){
-      
-      const result = await this.$store.dispatch('admin/deletePassStaging', {id: row.source_id})
-      if(result.data.message === 'ok'){
+    async deletePassStaging(row) {
+      const result = await this.$store.dispatch('admin/deletePassStaging', { id: row.source_id })
+      if (result.data.message === 'ok') {
         this.paginationChanged()
         this.$message({
           message: '操作成功',
@@ -202,16 +201,16 @@ export default {
         })
       }
     },
-    emptyInput(){
+    emptyInput() {
       this.paginationChanged()
       // this.wirteTableAndChart()
     },
-    async searchWithValue(val){
-      let current_course = this.courseValue.length === 0?'-1':this.courseValue
-      let current_type = this.typeValue.length === 0?'-1':this.typeValue
-      let current_status = '-1'
+    async searchWithValue(val) {
+      const current_course = this.courseValue.length === 0 ? '-1' : this.courseValue
+      const current_type = this.typeValue.length === 0 ? '-1' : this.typeValue
+      const current_status = '-1'
       this.currentPage = 1
-      const data = await this.$store.dispatch('admin/searchSourceWithValue', {value: val, staging: true, current_major: this.majorValue, current_course, current_type, current_status, current_page: this.currentPage, page_size: this.pageSize})
+      const data = await this.$store.dispatch('admin/searchSourceWithValue', { value: val, staging: true, current_major: this.majorValue, current_course, current_type, current_status, current_page: this.currentPage, page_size: this.pageSize })
       this.tableData = data.data.sources
       this.stagingFileTotal = data.data.total
     }

@@ -158,11 +158,11 @@ export default {
       this.sourceEx = row.upload_intro
     },
     downloadFile(row) {
-      this.$store.dispatch('publicOpen/addDownLoadTimes', {source_id: row.upload_id})
-      .then(res => {
-        window.open(this.link + row.upload_filelink)
-      })
-      .catch(err => {return})
+      this.$store.dispatch('publicOpen/addDownLoadTimes', { source_id: row.upload_id })
+        .then(res => {
+          window.open(this.link + row.upload_filelink)
+        })
+        .catch(err => { return })
       // link + scope.row.upload_filelink
     },
     async switchValueChanged(row) {
