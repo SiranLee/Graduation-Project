@@ -359,6 +359,7 @@ def get_stackbar_data(request):
 def get_homework_data(request):
     dep_id = request.GET.get('dep_id')
     course_id = request.GET.get('course_id')
+    
     checked_data = []
     try:
         course = Course.courseManager.get(no=course_id)

@@ -244,14 +244,14 @@ export default {
       .catch(() => { return })
   },
   methods: {
-    uniqueArr(arr){
-      let tempArr = []
-      let arrSet = new Set([arr[0].label])
-      for(let i = 1;i<arr.length;i++){
+    uniqueArr(arr) {
+      const tempArr = []
+      const arrSet = new Set([arr[0].label])
+      for (let i = 1; i < arr.length; i++) {
         arrSet.add(arr[i].label)
       }
-      let pureArr = Array.from(arrSet)
-      pureArr.forEach(item => {tempArr.push({label: item, value: item})})
+      const pureArr = Array.from(arrSet)
+      pureArr.forEach(item => { tempArr.push({ label: item, value: item }) })
       return tempArr
     },
     getData(data) {
@@ -272,33 +272,33 @@ export default {
       this[`sel${suffix}`] = v
       // console.log(this[`sel${suffix}`])
       this.$store.dispatch('teachers/getShortCourse', { id: this.$store.state.user.id, major: this.selMajor })
-      .then(res => {
-        this.optionsCourse = res.data.courses
-        this.selCourse = this.optionsCourse[0].course_id
-        return this.$store.dispatch('teachers/getTasksByCourse', { course_id: this.selCourse })
-      })
-      .then(res => {
-        this.optionsTask = res.data.tasks
-        // if(suffix === 'Course')
+        .then(res => {
+          this.optionsCourse = res.data.courses
+          this.selCourse = this.optionsCourse[0].course_id
+          return this.$store.dispatch('teachers/getTasksByCourse', { course_id: this.selCourse })
+        })
+        .then(res => {
+          this.optionsTask = res.data.tasks
+          // if(suffix === 'Course')
 
-        // this.selTask = this.optionsTask[0].value
-        return this.getData({
-          id: this.$store.state.user.id,
-          grade_id: this.selGrade,
-          course_id: this.selCourse,
-          task_id: this.selTask,
-          major_id: this.selMajor,
-          limit: this.limit,
-          page: this.currentPage,
-          status: this.selStatus
+          // this.selTask = this.optionsTask[0].value
+          return this.getData({
+            id: this.$store.state.user.id,
+            grade_id: this.selGrade,
+            course_id: this.selCourse,
+            task_id: this.selTask,
+            major_id: this.selMajor,
+            limit: this.limit,
+            page: this.currentPage,
+            status: this.selStatus
+          })
+        }).then(res => {
+          res.data.list.forEach((item, index) => {
+            item.index = index + 1
+          })
+          this.tableData = res.data.list
+          this.tableLoading = false
         })
-      }).then(res => {
-        res.data.list.forEach((item, index) => {
-          item.index = index + 1
-        })
-        this.tableData = res.data.list
-        this.tableLoading = false
-      })
         .catch(() => { return })
     },
     searchInput(v) {
