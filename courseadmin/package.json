@@ -1,5 +1,5 @@
 {
-  "name": "Course Resources Mangements",
+  "name": "course",
   "version": "1.0.0",
   "description": "None",
   "author": "Siran",
@@ -27,6 +27,7 @@
     "screenfull": "^5.1.0",
     "script-loader": "^0.7.2",
     "vue": "2.6.10",
+    "vue-easy-print": "^0.0.8",
     "vue-router": "3.0.6",
     "vuex": "3.1.0",
     "wangeditor": "^3.1.1",

@@ -10,6 +10,7 @@ import '@/styles/index.scss' // global css
 
 import App from './App'
 import store from './store'
+// import Print from './utils/print'
 import router, { constantRoutes } from './router'
 
 import '@/icons' // icon
@@ -30,6 +31,7 @@ import '@/permission' // permission control
 
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
+// Vue.use(Print)
 
 Vue.config.productionTip = false
 

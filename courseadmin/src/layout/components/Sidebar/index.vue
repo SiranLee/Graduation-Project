@@ -1,5 +1,6 @@
 <template>
-  <div :class="{'has-logo':showLogo}">
+<div class="no-print">
+    <div :class="{'has-logo':showLogo}">
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -16,6 +17,7 @@
       </el-menu>
     </el-scrollbar>
   </div>
+</div>
 </template>
 
 <script>
@@ -54,3 +56,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+@media print{
+  .no-print{
+    display: none;
+  }
+}
+</style>

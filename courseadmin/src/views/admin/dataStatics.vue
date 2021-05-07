@@ -1,5 +1,6 @@
 <template>
   <div class="mainContainer">
+  <div class="btn-no-print" style="margin-bottom: 20px;" ><el-button type="primary" @click="printPage">打印此页</el-button></div>
     <el-row :gutter="20" class="upBannerContainer">
       <el-col v-for="pic in pics" :key="pic.name" :span="6" class="upBanner">
         <div class="grid-content banner">
@@ -127,6 +128,7 @@ import pic1 from '@/assets/static_banner/tea.png'
 import pic2 from '@/assets/static_banner/stu.png'
 import pic3 from '@/assets/static_banner/source.png'
 import pic4 from '@/assets/static_banner/cour.png'
+// import vueEasyPrint from "vue-easy-print";
 import * as echarts from 'echarts/lib/echarts'
 import grid from 'echarts/lib/component/grid'
 import * as pie from 'echarts/lib/chart/pie'
@@ -137,6 +139,9 @@ import legend from 'echarts/lib/component/legend'
 import tooltip from 'echarts/lib/component/tooltip'
 import toolbox from 'echarts/lib/component/toolbox'
 export default {
+  // components:{
+  //   vueEasyPrint
+  // },
   data() {
     return {
       pics: [
@@ -600,13 +605,27 @@ export default {
     },
     formatJson(filterVal, jsonData) {
       return jsonData.map(v => filterVal.map(j => v[j]))
+    },
+    printPage(){
+      // this.$print(this.$refs.print)
+      window.print()
+      // console.log(this.$refs)
+      // this.$refs.easyPrint.print()
     }
   }
 }
 </script>
 <style scoped>
+@media print{
+  .btn-no-print{
+    display: none;
+  }
+  .mainContainer{
+    margin: left 0px;
+  }
+}
 div.mainContainer {
-  padding: 30px 0 30px 10px;
+  padding: 15px 0 30px 10px;
 }
 .el-row.upBannerContainer {
   height: 120px;
